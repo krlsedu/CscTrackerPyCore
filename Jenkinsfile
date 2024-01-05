@@ -1,8 +1,8 @@
 #!groovy
 env.RELEASE_COMMIT = "1"
 env.VERSION_NAME = ""
-env.SERVICE_NAME = "CscTrackerQueueScheduler"
-env.REPOSITORY_NAME = "CscTrackerQueueScheduler"
+env.SERVICE_NAME = "CscTrackerPyCore"
+env.REPOSITORY_NAME = "CscTrackerPyCore"
 
 pipeline {
     agent none

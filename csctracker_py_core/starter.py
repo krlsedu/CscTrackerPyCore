@@ -43,7 +43,8 @@ class Starter:
         SwaggerView.init(
             self.app,
             application_name=Version.get_app_name(),
-            application_version=Version.get_version()
+            application_version=Version.get_version(),
+            swagger_destination_path='swagger.yaml'
         )
         self.app.run(host='0.0.0.0',
                      port=Configs.get_env_variable(Config.PORT, default=5000))

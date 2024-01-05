@@ -3,12 +3,14 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
+from flask_swagger_generator.generators.swagger_view import SwaggerView
 from prometheus_flask_exporter import PrometheusMetrics
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.http_repository import HttpRepository
 from csctracker_py_core.repository.remote_repository import RemoteRepository
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.version import Version
 
 
 class Starter:
@@ -38,5 +40,10 @@ class Starter:
         return self.app
 
     def start(self):
+        SwaggerView.init(
+            self.app,
+            application_name=Version.get_app_name(),
+            application_version=Version.get_version()
+        )
         self.app.run(host='0.0.0.0',
                      port=Configs.get_env_variable(Config.PORT, default=5000))

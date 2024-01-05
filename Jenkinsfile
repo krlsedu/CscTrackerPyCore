@@ -59,6 +59,7 @@ pipeline {
                             script {
                                 sh 'git pull https://krlsedu:${password}@github.com/krlsedu/' + env.REPOSITORY_NAME + '.git HEAD:' + env.BRANCH_NAME
                                 sh 'echo ' + VERSION + ' > version.txt'
+                                sh 'echo ' + env.REPOSITORY_NAME + ' > app_name.txt'
                             }
                         }
                     }

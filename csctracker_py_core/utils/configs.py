@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from pythonjsonlogger import jsonlogger
 
 from csctracker_py_core.models.emuns.config import Config
+from csctracker_py_core.utils.version import Version
 from version import get_version, get_app_name
 
 
@@ -43,8 +44,8 @@ class Configs:
 
     def load_env(self):
         env_file = f"config/{self.env}.env"
-        os.environ['APPLICATION_VERSION'] = get_version()
-        os.environ['APPLICATION_NAME'] = get_app_name()
+        os.environ['APPLICATION_VERSION'] = Version.get_version()
+        os.environ['APPLICATION_NAME'] = Version.get_app_name()
         load_dotenv(env_file)
 
     @staticmethod

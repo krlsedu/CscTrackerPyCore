@@ -179,3 +179,6 @@ class HttpRepository:
 
     def post(self, url, body={}, headers=None):
         return requests.post(url, json=body, headers=headers)
+
+    def get_api_token(self):
+        return Configs.get_env_variable(Config.API_TOKEN)

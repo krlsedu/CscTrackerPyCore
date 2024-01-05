@@ -8,7 +8,6 @@ from pythonjsonlogger import jsonlogger
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.utils.version import Version
-from version import get_version, get_app_name
 
 
 class CustomJsonFormatter(jsonlogger.JsonFormatter):

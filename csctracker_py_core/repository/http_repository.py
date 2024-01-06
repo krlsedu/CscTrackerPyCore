@@ -189,3 +189,6 @@ class HttpRepository:
 
     def get_args(self):
         return request.args
+
+    def get_headers(self):
+        return request.headers

@@ -7,6 +7,8 @@ from csctracker_py_core.utils.configs import Configs
 class RemoteRepository:
     def __init__(self):
         self.url_repository = Configs.get_env_variable(Config.URL_REPOSITORY, default='http://bff:8080/repository/')
+        if self.url_repository[-1] != '/':
+            self.url_repository += '/'
         pass
 
     def insert(self, table, data, headers=None):

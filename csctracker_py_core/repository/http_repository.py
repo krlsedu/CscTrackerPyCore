@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 import requests
 from bs4 import BeautifulSoup
+from flask import request
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.remote_repository import RemoteRepository
@@ -182,3 +183,9 @@ class HttpRepository:
 
     def get_api_token(self):
         return Configs.get_env_variable(Config.API_TOKEN)
+
+    def get_json_body(self):
+        return request.json
+
+    def get_args(self):
+        return request.args

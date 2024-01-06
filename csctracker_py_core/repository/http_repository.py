@@ -178,8 +178,8 @@ class HttpRepository:
     def get(self, url, params={}, headers=None):
         return requests.get(url, params=params, headers=headers)
 
-    def post(self, url, body={}, headers=None):
-        return requests.post(url, json=body, headers=headers)
+    def post(self, url, body={}, headers=None, args=None):
+        return requests.post(url, json=body, headers=headers, params=args)
 
     def get_api_token(self):
         return Configs.get_env_variable(Config.API_TOKEN)

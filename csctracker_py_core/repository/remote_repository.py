@@ -14,6 +14,7 @@ class RemoteRepository:
             response = requests.post(self.url_repository + table, headers=headers, json=data)
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f'Error inserting data: {response.text}')
+            return response.json()
         except Exception as e:
             raise e
 
@@ -23,6 +24,7 @@ class RemoteRepository:
             response = requests.post(self.url_repository + table, headers=headers, json=data, params=params)
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f'Error updating data: {response.text}')
+            return response.json()
         except Exception as e:
             raise e
 
@@ -35,6 +37,7 @@ class RemoteRepository:
             response = requests.post(self.url_repository + "delete/" + table, headers=headers, json=data, params=params)
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f'Error deleting data: {response.text}')
+            return response.json()
         except Exception as e:
             raise e
 

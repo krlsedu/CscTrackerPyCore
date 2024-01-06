@@ -17,6 +17,8 @@ class Starter:
     def __init__(self):
         self.logger = logging.getLogger()
         self.app = Flask(__name__)
+        os.environ.pop("FLASK_RUN_FROM_CLI")
+        os.environ.pop("FLASK_ENV")
         self.cors = CORS(self.app)
         self.app.config['CORS_HEADERS'] = 'Content-Type'
         self.config = Configs(os.getenv('PROFILE', 'dev'))

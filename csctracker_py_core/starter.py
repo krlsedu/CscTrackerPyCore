@@ -36,7 +36,7 @@ class Starter:
             self.app,
             group_by='endpoint',
             default_labels={
-                'application': Configs.get_env_variable(Config.APPLICATION_NAME)
+                'application': Version.get_app_name()
             }
         )
 

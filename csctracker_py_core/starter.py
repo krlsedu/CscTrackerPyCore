@@ -10,6 +10,7 @@ from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.http_repository import HttpRepository
 from csctracker_py_core.repository.remote_repository import RemoteRepository
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.interceptor import Interceptor
 from csctracker_py_core.utils.version import Version
 
 
@@ -28,6 +29,7 @@ class Starter:
         self.cors = CORS(self.app)
         self.app.config['CORS_HEADERS'] = 'Content-Type'
         self.config = Configs(os.getenv('PROFILE', 'dev'))
+        self.interceptor = Interceptor(self.app)
         self.remote_repository = RemoteRepository()
         self.http_repository = HttpRepository(remote_repository=self.remote_repository)
         self.metrics = PrometheusMetrics(

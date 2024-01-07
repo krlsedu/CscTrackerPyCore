@@ -2,6 +2,7 @@ import requests
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.utils import Utils
 
 
 class RemoteRepository:
@@ -106,8 +107,8 @@ class RemoteRepository:
             keys = []
         if keys.__len__() > 0:
             for key in keys:
-                params[key] = data[key]
+                params[key] = Utils.to_url_encode(data[key])
             return params
         for key in data.keys():
-            params[key] = data[key]
+            params[key] = Utils.to_url_encode(data[key])
         return params

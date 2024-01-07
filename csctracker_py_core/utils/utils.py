@@ -5,6 +5,7 @@ import json
 import logging
 import os
 from datetime import datetime
+from urllib.parse import quote
 
 import pytz
 import requests
@@ -128,3 +129,9 @@ class Utils:
     @staticmethod
     def fill_left(value, size, fill_char='0'):
         return str(value).rjust(size, fill_char)
+
+    @staticmethod
+    def to_url_encode(value):
+        if value is None:
+            return None
+        return quote(value)

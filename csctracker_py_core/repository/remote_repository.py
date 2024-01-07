@@ -71,8 +71,6 @@ class RemoteRepository:
 
     def get_objects(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
-        for key in data.keys():
-            params[key] = data[key]
         try:
             response = requests.get(self.url_repository + table, params=params, headers=headers)
             if response.status_code < 200 or response.status_code > 299:

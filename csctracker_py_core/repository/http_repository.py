@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 import requests
 from bs4 import BeautifulSoup
 from flask import request
+from flask_cors import cross_origin
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.remote_repository import RemoteRepository
@@ -192,3 +193,9 @@ class HttpRepository:
 
     def get_headers(self):
         return request.headers
+
+    def get_request(self):
+        return request
+
+    def get_cross_origin(self):
+        return cross_origin

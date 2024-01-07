@@ -1,3 +1,6 @@
+import logging
+
+
 class Version:
     @staticmethod
     def get_version():
@@ -7,5 +10,6 @@ class Version:
     def get_app_name():
         try:
             return open('app_name.txt', 'r').read().strip()
-        except Exception:
+        except Exception as e:
+            logging.getLogger().error(e)
             return 'no_app_name'

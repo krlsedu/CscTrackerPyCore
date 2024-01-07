@@ -70,11 +70,7 @@ class RemoteRepository:
         return self.get_objects(table, [], {}, headers)
 
     def get_objects(self, table, keys=None, data=None, headers=None):
-        if keys is None:
-            keys = []
-        if data is None:
-            data = {}
-        params = {}
+        params = self.get_params(data, keys)
         for key in data.keys():
             params[key] = data[key]
         try:

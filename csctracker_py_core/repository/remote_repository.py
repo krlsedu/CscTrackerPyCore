@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 from csctracker_py_core.models.emuns.config import Config
@@ -7,6 +9,7 @@ from csctracker_py_core.utils.utils import Utils
 
 class RemoteRepository:
     def __init__(self):
+        self.logger = logging.getLogger()
         self.url_repository = Configs.get_env_variable(Config.URL_REPOSITORY, default='http://bff:8080/repository/')
         if self.url_repository[-1] != '/':
             self.url_repository += '/'
@@ -97,6 +100,7 @@ class RemoteRepository:
             objects = self.get_objects(table, key, data, headers)
             return objects.__len__() > 0
         except Exception as e:
+            self.logger.exception(e)
             return False
 
     def get_params(self, data, keys):

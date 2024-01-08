@@ -38,6 +38,8 @@ class Interceptor:
                     log_entry['request'] = request.get_json()
                 except Exception:
                     pass
-
-            self.logger.info(log_entry)
+            if request.path in ['/metrics', '/health']:
+                self.logger.debug(log_entry)
+            else:
+                self.logger.info(log_entry)
             return response

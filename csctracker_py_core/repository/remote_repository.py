@@ -4,7 +4,6 @@ import requests
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.utils.configs import Configs
-from csctracker_py_core.utils.utils import Utils
 
 
 class RemoteRepository:
@@ -35,7 +34,7 @@ class RemoteRepository:
             raise e
 
     def delete_all(self, table, headers=None):
-        self.delete(table, {}, headers)
+        self.delete(table, [], {}, headers=headers)
 
     def delete(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)

@@ -111,8 +111,8 @@ class RemoteRepository:
             keys = []
         if keys.__len__() > 0:
             for key in keys:
-                params[key] = Utils.to_url_encode(data[key])
+                params[key] = data[key]
             return params
         for key in data.keys():
-            params[key] = Utils.to_url_encode(data[key])
+            params[key] = data[key]
         return params

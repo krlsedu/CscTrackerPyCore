@@ -176,7 +176,9 @@ class HttpRepository:
                                     f'&time=6', headers=headers_sti)
         return response.json()
 
-    def get(self, url, params={}, headers=None):
+    def get(self, url, params={}, headers=None, body=None):
+        if body is not None:
+            return requests.get(url, params=params, headers=headers, json=body)
         return requests.get(url, params=params, headers=headers)
 
     def post(self, url, body={}, headers=None, args=None):

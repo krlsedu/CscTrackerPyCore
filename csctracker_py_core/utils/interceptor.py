@@ -1,10 +1,13 @@
 import logging
+import threading
 import time
+import uuid
 
 from flask import Flask, request, g
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.version import Version
 
 
 class Interceptor:
@@ -17,6 +20,9 @@ class Interceptor:
         @self.app.before_request
         def start_timer():
             g.start = time.time()
+            correlation_id = request.headers.get('X-Correlation-Id', str(uuid.uuid4()))
+            g.correlation_id = correlation_id
+            threading.local().correlation_id = correlation_id
 
         @self.app.after_request
         def log_request(response):
@@ -29,6 +35,8 @@ class Interceptor:
                 'args': dict(request.args),
                 'duration': f'{duration}s',
                 'date': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(now)),
+                'requestId': g.correlation_id,
+                'appName': Version.get_app_name(),
             }
             if Configs.get_env_variable(Config.LOG_RESPONSE_BODY) == 'True':
                 log_entry['response'] = response.get_json()

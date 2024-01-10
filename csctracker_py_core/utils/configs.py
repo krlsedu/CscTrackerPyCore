@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import threading
+import uuid
 
 from dotenv import load_dotenv
 from flask import g
@@ -19,7 +20,10 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
         try:
             log_record['requestId'] = g.correlation_id
         except Exception:
-            log_record['requestId'] = thread.__getattribute__('correlation_id')
+            try:
+                log_record['requestId'] = thread.__getattribute__('correlation_id')
+            except Exception:
+                log_record['requestId'] = uuid.uuid4()
         log_record['appName'] = Version.get_app_name()
         log_record['name'] = \
             f"{os.path.splitext(os.path.basename(record.pathname))[0]}.{record.funcName}:{record.lineno}"

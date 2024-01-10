@@ -2,29 +2,21 @@ import decimal
 import json
 import logging
 import os
-import threading
-import uuid
 
 from dotenv import load_dotenv
-from flask import g
 from pythonjsonlogger import jsonlogger
 
 from csctracker_py_core.models.emuns.config import Config
+from csctracker_py_core.utils.request_info import RequestInfo
 from csctracker_py_core.utils.version import Version
 
 
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
     def add_fields(self, log_record, record, message_dict):
         super().add_fields(log_record, record, message_dict)
-        thread = threading.current_thread()
-        try:
-            log_record['requestId'] = g.correlation_id
-        except Exception:
-            try:
-                log_record['requestId'] = thread.__getattribute__('correlation_id')
-            except Exception:
-                log_record['requestId'] = uuid.uuid4()
+        log_record['requestId'] = RequestInfo.get_request_id()
         log_record['appName'] = Version.get_app_name()
+        log_record['appVersion'] = Version.get_version()
         log_record['name'] = \
             f"{os.path.splitext(os.path.basename(record.pathname))[0]}.{record.funcName}:{record.lineno}"
 

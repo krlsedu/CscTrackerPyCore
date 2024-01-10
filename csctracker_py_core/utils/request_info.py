@@ -23,5 +23,5 @@ class RequestInfo:
         return request_id_
 
     @staticmethod
-    def get_correlation_id(self):
+    def get_correlation_id():
         return request.headers.get('x-correlation-id', str(uuid.uuid4()))

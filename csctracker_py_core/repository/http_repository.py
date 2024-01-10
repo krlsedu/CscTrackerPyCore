@@ -8,6 +8,7 @@ from flask_cors import cross_origin
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.remote_repository import RemoteRepository
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.request_info import RequestInfo
 
 headers_sti = {
     'Cookie': Configs.get_env_variable(Config.STI_COOKIE),
@@ -194,7 +195,13 @@ class HttpRepository:
         return request.args
 
     def get_headers(self):
-        return request.headers
+        headers = request.headers
+        headers_ = {}
+        for key in headers.keys():
+            headers_[key] = headers.get(key)
+        if 'x-correlation-id' not in headers_:
+            headers_['x-correlation-id'] = RequestInfo.get_request_id(True)
+        return headers
 
     def get_request(self):
         return request

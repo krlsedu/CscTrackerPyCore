@@ -114,6 +114,34 @@ pipeline {
             }
         }
 
+        stage('Update dos serviços dependentes') {
+            agent any
+            when {
+                expression { env.RELEASE_COMMIT != '0' }
+            }
+            steps {
+                script {
+                    // Contagem regressiva visual
+                    for (int i = 60; i >= 0; i--) {
+                        println "Waiting... ${i} seconds remaining."
+                        sleep(time: 1, unit: 'SECONDS')
+                    }
+                    withCredentials([string(credentialsId: 'csctracker_token', variable: 'token_csctracker')]) {
+                        def xCorrelationId = 'update-lib-' + env.REPOSITORY_NAME + '/' + env.VERSION_NAME
+                        httpRequest acceptType: 'APPLICATION_JSON',
+                                contentType: 'APPLICATION_JSON',
+                                httpMode: 'POST', quiet: true,
+                                requestBody: '''{}''',
+                                customHeaders: [
+                                        [name: 'authorization', value: 'Bearer ' + env.token_csctracker],
+                                        [name: 'x-correlation-id', value: xCorrelationId]
+                                ],
+                                url: 'https://gtw.csctracker.com/update/' + env.REPOSITORY_NAME + '/' + env.VERSION_NAME
+                    }
+                }
+            }
+        }
+
         stage('Notificar fim de build') {
             agent any
             when {

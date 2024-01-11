@@ -3,6 +3,7 @@ env.RELEASE_COMMIT = "1"
 env.VERSION_NAME = ""
 env.SERVICE_NAME = "CscTrackerPyCore"
 env.REPOSITORY_NAME = "CscTrackerPyCore"
+env.LIBRARY_NAME = "csctracker-py-core"
 
 pipeline {
     agent none
@@ -127,7 +128,7 @@ pipeline {
                         sleep(time: 1, unit: 'SECONDS')
                     }
                     withCredentials([string(credentialsId: 'csctracker_token', variable: 'token_csctracker')]) {
-                        def xCorrelationId = 'update-lib-' + env.REPOSITORY_NAME + '/' + env.VERSION_NAME
+                        def xCorrelationId = 'update-lib_' + env.LIBRARY_NAME + '-' + env.VERSION_NAME
                         httpRequest acceptType: 'APPLICATION_JSON',
                                 contentType: 'APPLICATION_JSON',
                                 httpMode: 'POST', quiet: true,
@@ -136,7 +137,7 @@ pipeline {
                                         [name: 'authorization', value: 'Bearer ' + env.token_csctracker],
                                         [name: 'x-correlation-id', value: xCorrelationId]
                                 ],
-                                url: 'https://gtw.csctracker.com/update/' + env.REPOSITORY_NAME + '/' + env.VERSION_NAME
+                                url: 'https://gtw.csctracker.com/update/' + env.LIBRARY_NAME + '/' + env.VERSION_NAME
                     }
                 }
             }

@@ -131,7 +131,7 @@ pipeline {
                         def url = 'https://redirect.loclx.io/updater/' + env.LIBRARY_NAME + '/' + env.VERSION_NAME
                         println 'url ' + url
                         println 'xCorrelationId ' + xCorrelationId
-                        httpRequest acceptType: 'APPLICATION_JSON',
+                        def response = httpRequest acceptType: 'APPLICATION_JSON',
                                 contentType: 'APPLICATION_JSON',
                                 httpMode: 'POST', quiet: true,
                                 requestBody: '''{}''',
@@ -140,6 +140,7 @@ pipeline {
                                         [name: 'x-correlation-id', value: xCorrelationId]
                                 ],
                                 url: '' + url
+                        println 'Response: ' + response.content
                     }
                 }
             }

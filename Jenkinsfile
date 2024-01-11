@@ -129,6 +129,7 @@ pipeline {
                     }
                     withCredentials([string(credentialsId: 'csctracker_token', variable: 'token_csctracker')]) {
                         def xCorrelationId = 'update-lib_' + env.LIBRARY_NAME + '-' + env.VERSION_NAME
+                        println 'xCorrelationId ' + xCorrelationId
                         httpRequest acceptType: 'APPLICATION_JSON',
                                 contentType: 'APPLICATION_JSON',
                                 httpMode: 'POST', quiet: true,
@@ -137,7 +138,7 @@ pipeline {
                                         [name: 'authorization', value: 'Bearer ' + env.token_csctracker],
                                         [name: 'x-correlation-id', value: xCorrelationId]
                                 ],
-                                url: 'https://gtw.csctracker.com/update/' + env.LIBRARY_NAME + '/' + env.VERSION_NAME
+                                url: 'https://gtw.csctracker.com/updater/' + env.LIBRARY_NAME + '/' + env.VERSION_NAME
                     }
                 }
             }

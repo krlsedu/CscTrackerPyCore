@@ -122,7 +122,6 @@ pipeline {
             }
             steps {
                 script {
-                    // Contagem regressiva visual
                     for (int i = 60; i >= 0; i--) {
                         println "Waiting... ${i} seconds remaining."
                         sleep(time: 1, unit: 'SECONDS')

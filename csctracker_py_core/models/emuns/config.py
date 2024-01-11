@@ -16,3 +16,5 @@ class Config(Enum):
     STI_COOKIE = "STI_COOKIE"
     PORT = "PORT"
     API_TOKEN = "API_TOKEN"
+    GITHUB_USER = "GITHUB_USER"
+    GITHUB_PASS = "GITHUB_PASS"

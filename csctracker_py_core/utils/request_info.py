@@ -3,6 +3,8 @@ import uuid
 
 from flask import g, request
 
+from csctracker_py_core.utils.version import Version
+
 
 class RequestInfo:
 
@@ -16,7 +18,7 @@ class RequestInfo:
                 request_id_ = thread.__getattribute__('correlation_id')
             except Exception:
                 if create_new:
-                    request_id_ = str(uuid.uuid4())
+                    request_id_ = f"{Version.get_app_name()}-{str(uuid.uuid4())}"
                 else:
                     request_id_ = None
 
@@ -24,4 +26,4 @@ class RequestInfo:
 
     @staticmethod
     def get_correlation_id():
-        return request.headers.get('x-correlation-id', str(uuid.uuid4()))
+        return request.headers.get('x-correlation-id', f"{Version.get_app_name()}-{str(uuid.uuid4())}")

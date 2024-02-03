@@ -15,9 +15,9 @@ from csctracker_py_core.utils.version import Version
 
 
 class Starter:
-    def __init__(self):
+    def __init__(self, static_folder="static"):
         self.logger = logging.getLogger()
-        self.app = Flask(__name__)
+        self.app = Flask(__name__, static_folder=static_folder)
         try:
             os.environ.pop("FLASK_RUN_FROM_CLI")
         except:

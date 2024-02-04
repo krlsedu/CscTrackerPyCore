@@ -1,4 +1,4 @@
-csctracker-queue-scheduler==24.2.1
+csctracker-queue-scheduler==24.6.1
 
 flask~=3.0.0
 python-json-logger

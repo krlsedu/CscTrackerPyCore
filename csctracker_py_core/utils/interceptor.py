@@ -68,8 +68,8 @@ class Interceptor:
             request_info_ = {
                 "path": path,
                 "method": request_.method,
-                "headers": dict(request_.headers),
-                "parameters": dict(request_.args),
+                "headers": str(dict(request_.headers)),
+                "parameters": str(dict(request_.args)),
                 "body": request_.get_data(as_text=True),
                 "response": decoded_data,
                 "success": 'S' if response.status_code < 400 else 'F',

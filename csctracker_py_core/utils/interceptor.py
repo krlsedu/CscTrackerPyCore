@@ -10,6 +10,7 @@ from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.http_repository import HttpRepository
 from csctracker_py_core.utils.configs import Configs
 from csctracker_py_core.utils.request_info import RequestInfo
+from csctracker_py_core.utils.utils import Utils
 from csctracker_py_core.utils.version import Version
 
 
@@ -65,10 +66,13 @@ class Interceptor:
         try:
             data = response.get_data()
             decoded_data = data.decode('utf-8', 'ignore')
+            headers_ = Utils.conv_keys_to_lower(dict(request_.headers))
+            if 'x-correlation-id' not in headers_:
+                headers_['x-correlation-id'] = RequestInfo.get_request_id()
             request_info_ = {
                 "path": path,
                 "method": request_.method,
-                "headers": str(dict(request_.headers)),
+                "headers": str(headers_),
                 "parameters": str(dict(request_.args)),
                 "body": request_.get_data(as_text=True),
                 "response": decoded_data,

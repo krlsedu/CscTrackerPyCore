@@ -135,3 +135,7 @@ class Utils:
         if value is None:
             return None
         return quote(value)
+
+    @staticmethod
+    def conv_keys_to_lower(d):
+        return {k.lower(): v for k, v in d.items()}

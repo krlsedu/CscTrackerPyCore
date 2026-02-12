@@ -31,7 +31,7 @@ jobs:
         echo "::set-env name=BRANCH_NAME::$branch"
     - name: Build
       run: |
-        pip install wheel
+        python -m pip install --upgrade pip setuptools wheel
         python ./setup.py sdist bdist_wheel
     - name: Upload to PyPI
       uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29

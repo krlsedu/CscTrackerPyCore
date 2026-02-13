@@ -5,18 +5,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-CscTrackerPyCore È uma biblioteca Python base desenvolvida para padronizar e acelerar o desenvolvimento de microserviÁos. Ela oferece integraÁ„o nativa com Flask, fornecendo recursos essenciais como logging estruturado em JSON, telemetria com Prometheus, documentaÁ„o autom·tica via Swagger e gerenciamento de tarefas agendadas.
+CscTrackerPyCore √© uma biblioteca Python base desenvolvida para padronizar e acelerar o desenvolvimento de microservi√ßos. Ela oferece integra√ß√£o nativa com Flask, fornecendo recursos essenciais como logging estruturado em JSON, telemetria com Prometheus, documenta√ß√£o autom√°tica via Swagger e gerenciamento de tarefas agendadas.
 
 ## Principais Funcionalidades
 
-- **Starter Facilitado**: InicializaÁ„o r·pida de aplicaÁıes Flask com suporte a CORS e tratamento de vari·veis de ambiente.
-- **Logging Estruturado**: FormataÁ„o autom·tica de logs em JSON com inclus„o de `requestId`, `appName` e `appVersion` para melhor rastreabilidade.
+- **Starter Facilitado**: Inicializa√ß√£o r√°pida de aplica√ß√µes Flask com suporte a CORS e tratamento de vari√°veis de ambiente.
+- **Logging Estruturado**: Formata√ß√£o autom√°tica de logs em JSON com inclus√£o de `requestId`, `appName` e `appVersion` para melhor rastreabilidade.
 - **Observabilidade**:
-    - IntegraÁ„o nativa com **Prometheus** para coleta de mÈtricas de endpoints.
-    - **Interceptor de RequisiÁıes**: Registro detalhado de chamadas HTTP (mÈtodo, path, status, duraÁ„o) com opÁ„o de persistÍncia remota para auditoria.
-- **DocumentaÁ„o Autom·tica**: GeraÁ„o de especificaÁ„o **Swagger (OpenAPI)** simplificada.
-- **Processamento em Background**: IntegraÁ„o com `csctracker-queue-scheduler` para execuÁ„o de tarefas assÌncronas e agendadas.
-- **RepositÛrios Remotos**: AbstraÁ„o para comunicaÁ„o entre serviÁos via HTTP com tratamento de headers e correlaÁ„o.
+    - Integra√ß√£o nativa com **Prometheus** para coleta de m√©tricas de endpoints.
+    - **Interceptor de Requisi√ß√µes**: Registro detalhado de chamadas HTTP (m√©todo, path, status, dura√ß√£o) com op√ß√£o de persist√™ncia remota para auditoria.
+- **Documenta√ß√£o Autom√°tica**: Gera√ß√£o de especifica√ß√£o **Swagger (OpenAPI)** simplificada.
+- **Processamento em Background**: Integra√ß√£o com `csctracker-queue-scheduler` para execu√ß√£o de tarefas ass√≠ncronas e agendadas.
+- **Reposit√≥rios Remotos**: Abstra√ß√£o para comunica√ß√£o entre servi√ßos via HTTP com tratamento de headers e correla√ß√£o.
 
 ## Requisitos
 
@@ -28,9 +28,9 @@ CscTrackerPyCore È uma biblioteca Python base desenvolvida para padronizar e ace
 - Python JSON Logger
 - Python Dotenv
 
-## InstalaÁ„o
+## Instala√ß√£o
 
-As dependÍncias podem ser instaladas via `pip`:
+As depend√™ncias podem ser instaladas via `pip`:
 
 ```bash
 pip install csctracker-py-core
@@ -42,37 +42,37 @@ Ou via `requirements.txt`:
 pip install -r requirements.txt
 ```
 
-## ConfiguraÁ„o
+## Configura√ß√£o
 
-A biblioteca È configurada principalmente via vari·veis de ambiente, suportando arquivos `.env` localizados na pasta `config/` (ex: `config/dev.env`).
+A biblioteca √© configurada principalmente via vari√°veis de ambiente, suportando arquivos `.env` localizados na pasta `config/` (ex: `config/dev.env`).
 
-### Vari·veis de Ambiente Suportadas
+### Vari√°veis de Ambiente Suportadas
 
-| Vari·vel | DescriÁ„o | Exemplo |
+| Vari√°vel | Descri√ß√£o | Exemplo |
 | :--- | :--- | :--- |
-| `PROFILE` | Perfil de configuraÁ„o (define o arquivo .env) | `dev` |
-| `PORT` | Porta de execuÁ„o do servidor Flask | `5000` |
-| `LOG_LEVEL` | NÌvel de detalhamento do log | `INFO`, `DEBUG` |
-| `LOG_REQUEST_BODY` | Se `True`, inclui o corpo da requisiÁ„o nos logs | `True` |
+| `PROFILE` | Perfil de configura√ß√£o (define o arquivo .env) | `dev` |
+| `PORT` | Porta de execu√ß√£o do servidor Flask | `5000` |
+| `LOG_LEVEL` | N√≠vel de detalhamento do log | `INFO`, `DEBUG` |
+| `LOG_REQUEST_BODY` | Se `True`, inclui o corpo da requisi√ß√£o nos logs | `True` |
 | `LOG_RESPONSE_BODY` | Se `True`, inclui o corpo da resposta nos logs | `False` |
-| `URL_BFF` | URL base para persistÍncia de logs de requisiÁ„o | `http://api-gateway/` |
-| `API_TOKEN` | Token de autorizaÁ„o para chamadas externas | `seu_token_aqui` |
+| `URL_BFF` | URL base para persist√™ncia de logs de requisi√ß√£o | `http://api-gateway/` |
+| `API_TOKEN` | Token de autoriza√ß√£o para chamadas externas | `seu_token_aqui` |
 | `DEBUG` | Ativa o modo debug do Flask se definido como `1` | `0` |
 
-## Uso Did·tico
+## Uso Did√°tico
 
-### 1. InicializaÁ„o do `Starter`
+### 1. Inicializa√ß√£o do `Starter`
 
-A classe `Starter` centraliza a configuraÁ„o do Flask.
+A classe `Starter` centraliza a configura√ß√£o do Flask.
 
 ```python
 from csctracker_py_core.starter import Starter
 
-# Inicializa o starter (static_folder define a pasta de arquivos est·ticos)
-# save_request=True ativa a persistÍncia remota de logs de requisiÁ„o
+# Inicializa o starter (static_folder define a pasta de arquivos est√°ticos)
+# save_request=True ativa a persist√™ncia remota de logs de requisi√ß√£o
 starter = Starter(save_request=False)
 
-# ObtÈm a inst‚ncia do Flask configurada
+# Obt√©m a inst√¢ncia do Flask configurada
 app = starter.get_app()
 
 @app.route('/')
@@ -83,25 +83,25 @@ if __name__ == '__main__':
     starter.start()
 ```
 
-### 2. Logging e InterceptaÁ„o
+### 2. Logging e Intercepta√ß√£o
 
-Uma vez iniciado o `Starter`, todos os logs do sistema usar„o o formato JSON e as requisiÁıes ser„o interceptadas automaticamente para gerar telemetria.
+Uma vez iniciado o `Starter`, todos os logs do sistema usar√£o o formato JSON e as requisi√ß√µes ser√£o interceptadas automaticamente para gerar telemetria.
 
-### 3. Acesso aos RepositÛrios
+### 3. Acesso aos Reposit√≥rios
 
 ```python
-# Acesso ao repositÛrio HTTP para chamadas externas padronizadas
+# Acesso ao reposit√≥rio HTTP para chamadas externas padronizadas
 http_repo = starter.get_http_repository()
 ```
 
 ## Estrutura do Projeto
 
-- `Starter`: Orquestrador principal que configura Flask, CORS, MÈtricas e Swagger.
-- `Configs`: Gerencia o carregamento de vari·veis de ambiente e a configuraÁ„o do logger JSON.
-- `Interceptor`: Middleware Flask que captura dados de performance e logs de entrada/saÌda.
-- `HttpRepository`: Facilita requisiÁıes HTTP externas com injeÁ„o de headers de seguranÁa e rastreio.
-- `RequestInfo`: Utilit·rio para gerenciar IDs de correlaÁ„o (Correlation IDs) entre threads.
+- `Starter`: Orquestrador principal que configura Flask, CORS, M√©tricas e Swagger.
+- `Configs`: Gerencia o carregamento de vari√°veis de ambiente e a configura√ß√£o do logger JSON.
+- `Interceptor`: Middleware Flask que captura dados de performance e logs de entrada/sa√≠da.
+- `HttpRepository`: Facilita requisi√ß√µes HTTP externas com inje√ß√£o de headers de seguran√ßa e rastreio.
+- `RequestInfo`: Utilit√°rio para gerenciar IDs de correla√ß√£o (Correlation IDs) entre threads.
 
-## LicenÁa
+## Licen√ßa
 
-Este projeto est· sob a licenÁa MIT. Consulte o arquivo `LICENSE` para mais detalhes.
+Este projeto est√° sob a licen√ßa MIT. Consulte o arquivo `LICENSE` para mais detalhes.

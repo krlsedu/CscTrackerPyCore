@@ -36,25 +36,25 @@ class Interceptor:
             now = time.time()
             duration = round(now - g.start, 2)
             log_entry = {
-                'method': request.method,
-                'path': request.path,
-                'status': response.status_code,
-                'args': dict(request.args),
-                'duration': f'{duration}s',
-                'date': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(now)),
-                'requestId': g.correlation_id,
-                'appName': Version.get_app_name(),
-                'appVersion': Version.get_version(),
+                "method": request.method,
+                "path": request.path,
+                "status": response.status_code,
+                "args": dict(request.args),
+                "duration": f"{duration}s",
+                "date": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(now)),
+                "requestId": g.correlation_id,
+                "appName": Version.get_app_name(),
+                "appVersion": Version.get_version(),
             }
-            if Configs.get_env_variable(Config.LOG_RESPONSE_BODY) == 'True':
-                log_entry['response'] = response.get_json()
+            if Configs.get_env_variable(Config.LOG_RESPONSE_BODY) == "True":
+                log_entry["response"] = response.get_json()
 
-            if Configs.get_env_variable(Config.LOG_REQUEST_BODY) == 'True':
+            if Configs.get_env_variable(Config.LOG_REQUEST_BODY) == "True":
                 try:
-                    log_entry['request'] = request.get_json()
+                    log_entry["request"] = request.get_json()
                 except Exception:
                     pass
-            if request.path in ['/metrics', '/health']:
+            if request.path in ["/metrics", "/health"]:
                 self.logger.debug(log_entry)
             else:
                 self.logger.info(log_entry)
@@ -65,10 +65,10 @@ class Interceptor:
     def save_request_info(self, request_, response, path):
         try:
             data = response.get_data()
-            decoded_data = data.decode('utf-8', 'ignore')
+            decoded_data = data.decode("utf-8", "ignore")
             headers_ = Utils.conv_keys_to_lower(dict(request_.headers))
-            if 'x-correlation-id' not in headers_:
-                headers_['x-correlation-id'] = RequestInfo.get_request_id()
+            if "x-correlation-id" not in headers_:
+                headers_["x-correlation-id"] = RequestInfo.get_request_id()
             request_info_ = {
                 "path": path,
                 "method": request_.method,
@@ -76,22 +76,24 @@ class Interceptor:
                 "parameters": str(dict(request_.args)),
                 "body": request_.get_data(as_text=True),
                 "response": decoded_data,
-                "success": 'S' if response.status_code < 400 else 'F',
+                "success": "S" if response.status_code < 400 else "F",
                 "duration": round(time.time() - g.start, 2),
                 "request_id": RequestInfo.get_request_id(),
-                "date_time": datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'),
+                "date_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
             }
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {Configs.get_env_variable(Config.API_TOKEN)}",
-                "x-correlation-id": RequestInfo.get_request_id()
+                "x-correlation-id": RequestInfo.get_request_id(),
             }
             args_ = {
-                'url': f"{Configs.get_env_variable(Config.URL_BFF)}rabbit/requests",
-                'body': request_info_,
-                'headers': headers
+                "url": f"{Configs.get_env_variable(Config.URL_BFF)}rabbit/requests",
+                "body": request_info_,
+                "headers": headers,
             }
-            SchedulerService.put_in_queue(self.http_repository.post, args=args_, priority=True)
+            SchedulerService.put_in_queue(
+                self.http_repository.post, args=args_, priority=True
+            )
         except Exception as e:
             logging.getLogger().error(f"Error: {str(e)}")
             pass

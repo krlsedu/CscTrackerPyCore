@@ -1,2 +1,2 @@
 def get_version():
-    return open('version.txt', 'r').read().strip()
+    return open("version.txt", "r").read().strip()

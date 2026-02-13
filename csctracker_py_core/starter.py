@@ -29,17 +29,17 @@ class Starter:
             pass
         SchedulerService.init(10)
         self.cors = CORS(self.app)
-        self.app.config['CORS_HEADERS'] = 'Content-Type'
-        self.config = Configs(os.getenv('PROFILE', 'dev'))
+        self.app.config["CORS_HEADERS"] = "Content-Type"
+        self.config = Configs(os.getenv("PROFILE", "dev"))
         self.remote_repository = RemoteRepository()
         self.http_repository = HttpRepository(remote_repository=self.remote_repository)
-        self.interceptor = Interceptor(self.app, self.http_repository, save_request=save_request)
+        self.interceptor = Interceptor(
+            self.app, self.http_repository, save_request=save_request
+        )
         self.metrics = PrometheusMetrics(
             self.app,
-            group_by='endpoint',
-            default_labels={
-                'application': Version.get_app_name()
-            }
+            group_by="endpoint",
+            default_labels={"application": Version.get_app_name()},
         )
 
     def get_remote_repository(self):
@@ -56,7 +56,8 @@ class Starter:
             self.app,
             application_name=Version.get_app_name(),
             application_version=Version.get_version(),
-            swagger_destination_path='swagger.yaml'
+            swagger_destination_path="swagger.yaml",
         )
-        self.app.run(host='0.0.0.0',
-                     port=Configs.get_env_variable(Config.PORT, default=5000))
+        self.app.run(
+            host="0.0.0.0", port=Configs.get_env_variable(Config.PORT, default=5000)
+        )

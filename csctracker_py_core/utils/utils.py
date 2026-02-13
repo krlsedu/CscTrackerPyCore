@@ -20,9 +20,9 @@ class Encoder(json.JSONEncoder):
         if isinstance(obj, decimal.Decimal):
             return float(obj)
         if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S.%f')
+            return obj.strftime("%Y-%m-%d %H:%M:%S.%f")
         if isinstance(obj, datetime.date):
-            return obj.strftime('%Y-%m-%d')
+            return obj.strftime("%Y-%m-%d")
 
 
 class Utils:
@@ -46,7 +46,7 @@ class Utils:
 
     @staticmethod
     def read_file(file_name):
-        file_dir = os.path.dirname(os.path.realpath('__file__'))
+        file_dir = os.path.dirname(os.path.realpath("__file__"))
         file_name = os.path.join(file_dir, file_name)
         file_handle = open(file_name)
         content = file_handle.read()
@@ -76,7 +76,9 @@ class Utils:
         return dt_string.strftime(format)
 
     @staticmethod
-    def get_format_date_time_in_tz(dt_string, format, original_tz='America/Sao_Paulo', new_tz='UTC'):
+    def get_format_date_time_in_tz(
+        dt_string, format, original_tz="America/Sao_Paulo", new_tz="UTC"
+    ):
         dt_obj = datetime.strptime(dt_string, format)
 
         original_tz_ = pytz.timezone(original_tz)
@@ -100,15 +102,17 @@ class Utils:
             "text": msg,
             "data": json_,
             "app": Version.get_app_name(),
-            "operation": operation
+            "operation": operation,
         }
 
         if from_ is not None:
-            message['from'] = from_
+            message["from"] = from_
 
         response = requests.post(
             f"{Configs.get_env_variable(Config.URL_BFF, default='http://bff:8080/')}notify-sync/message",
-            headers=headers, json=message)
+            headers=headers,
+            json=message,
+        )
         if response.status_code != 200:
             logging.getLogger().info(response.status_code)
         pass
@@ -127,7 +131,7 @@ class Utils:
         return str(calendar.monthrange(int(year), int(month))[1])
 
     @staticmethod
-    def fill_left(value, size, fill_char='0'):
+    def fill_left(value, size, fill_char="0"):
         return str(value).rjust(size, fill_char)
 
     @staticmethod

@@ -9,16 +9,20 @@ from csctracker_py_core.utils.configs import Configs
 class RemoteRepository:
     def __init__(self):
         self.logger = logging.getLogger()
-        self.url_repository = Configs.get_env_variable(Config.URL_REPOSITORY, default='http://bff:8080/repository/')
-        if self.url_repository[-1] != '/':
-            self.url_repository += '/'
+        self.url_repository = Configs.get_env_variable(
+            Config.URL_REPOSITORY, default="http://bff:8080/repository/"
+        )
+        if self.url_repository[-1] != "/":
+            self.url_repository += "/"
         pass
 
     def insert(self, table, data, headers=None):
         try:
-            response = requests.post(self.url_repository + table, headers=headers, json=data)
+            response = requests.post(
+                self.url_repository + table, headers=headers, json=data
+            )
             if response.status_code < 200 or response.status_code > 299:
-                raise Exception(f'Error inserting data: {response.text}')
+                raise Exception(f"Error inserting data: {response.text}")
             return response.json()
         except Exception as e:
             raise e
@@ -26,9 +30,11 @@ class RemoteRepository:
     def update(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.post(self.url_repository + table, headers=headers, json=data, params=params)
+            response = requests.post(
+                self.url_repository + table, headers=headers, json=data, params=params
+            )
             if response.status_code < 200 or response.status_code > 299:
-                raise Exception(f'Error updating data: {response.text}')
+                raise Exception(f"Error updating data: {response.text}")
             return response.json()
         except Exception as e:
             raise e
@@ -39,22 +45,27 @@ class RemoteRepository:
     def delete(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.post(self.url_repository + "delete/" + table, headers=headers, json=data, params=params)
+            response = requests.post(
+                self.url_repository + "delete/" + table,
+                headers=headers,
+                json=data,
+                params=params,
+            )
             if response.status_code < 200 or response.status_code > 299:
-                raise Exception(f'Error deleting data: {response.text}')
+                raise Exception(f"Error deleting data: {response.text}")
             return response.json()
         except Exception as e:
             raise e
 
     def add_user_id(self, data, headers=None):
         user = self.get_user(headers)
-        data['user_id'] = user['id']
+        data["user_id"] = user["id"]
         return data
 
     def get_user(self, headers=None):
-        user_name = headers.get('userName')
+        user_name = headers.get("userName")
         try:
-            user = self.get_object('users', data={'email': user_name}, headers=headers)
+            user = self.get_object("users", data={"email": user_name}, headers=headers)
             return user
         except Exception as e:
             raise e
@@ -62,9 +73,11 @@ class RemoteRepository:
     def get_object(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.get(self.url_repository + 'single/' + table, params=params, headers=headers)
+            response = requests.get(
+                self.url_repository + "single/" + table, params=params, headers=headers
+            )
             if response.status_code < 200 or response.status_code > 299:
-                raise Exception(f'Error getting data: {response.text}')
+                raise Exception(f"Error getting data: {response.text}")
             return response.json()
         except Exception as e:
             raise e
@@ -75,21 +88,23 @@ class RemoteRepository:
     def get_objects(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.get(self.url_repository + table, params=params, headers=headers)
+            response = requests.get(
+                self.url_repository + table, params=params, headers=headers
+            )
             if response.status_code < 200 or response.status_code > 299:
-                raise Exception(f'Error getting data: {response.text}')
+                raise Exception(f"Error getting data: {response.text}")
             return response.json()
         except Exception as e:
             raise e
 
     def execute_select(self, select, headers=None):
-        command = {
-            'command': select
-        }
+        command = {"command": select}
         try:
-            response = requests.post(self.url_repository + "command/select", headers=headers, json=command)
+            response = requests.post(
+                self.url_repository + "command/select", headers=headers, json=command
+            )
             if response.status_code < 200 or response.status_code > 299:
-                raise Exception(f'Error getting data: {response.text}')
+                raise Exception(f"Error getting data: {response.text}")
             return response.json()
         except Exception as e:
             raise e

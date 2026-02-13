@@ -14,11 +14,12 @@ from csctracker_py_core.utils.version import Version
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
     def add_fields(self, log_record, record, message_dict):
         super().add_fields(log_record, record, message_dict)
-        log_record['requestId'] = RequestInfo.get_request_id()
-        log_record['appName'] = Version.get_app_name()
-        log_record['appVersion'] = Version.get_version()
-        log_record['name'] = \
+        log_record["requestId"] = RequestInfo.get_request_id()
+        log_record["appName"] = Version.get_app_name()
+        log_record["appVersion"] = Version.get_version()
+        log_record["name"] = (
             f"{os.path.splitext(os.path.basename(record.pathname))[0]}.{record.funcName}:{record.lineno}"
+        )
 
 
 class Encoder(json.JSONEncoder):
@@ -29,12 +30,14 @@ class Encoder(json.JSONEncoder):
 
 class Configs:
     def __init__(self, env):
-        log = logging.getLogger('werkzeug')
+        log = logging.getLogger("werkzeug")
         log.setLevel(logging.ERROR)
 
         self.logger = logging.getLogger()
         self.logger.setLevel(Configs.log_level())
-        formatter = CustomJsonFormatter('%(levelname)s %(name)s %(requestId)s %(appName)s %(message)s')
+        formatter = CustomJsonFormatter(
+            "%(levelname)s %(name)s %(requestId)s %(appName)s %(message)s"
+        )
         json_handler = logging.StreamHandler()
         json_handler.setFormatter(formatter)
         self.logger.addHandler(json_handler)
@@ -47,8 +50,8 @@ class Configs:
 
     def load_env(self):
         env_file = f"config/{self.env}.env"
-        os.environ['APPLICATION_VERSION'] = Version.get_version()
-        os.environ['APPLICATION_NAME'] = Version.get_app_name()
+        os.environ["APPLICATION_VERSION"] = Version.get_version()
+        os.environ["APPLICATION_NAME"] = Version.get_app_name()
         load_dotenv(env_file)
 
     @staticmethod
@@ -76,17 +79,17 @@ class Configs:
         variable = Configs.get_env_variable(Config.LOG_LEVEL)
 
         if variable is None:
-            variable = 'INFO'
+            variable = "INFO"
         variable = variable.upper()
-        if variable == 'DEBUG':
+        if variable == "DEBUG":
             return logging.DEBUG
-        elif variable == 'INFO':
+        elif variable == "INFO":
             return logging.INFO
-        elif variable == 'WARNING':
+        elif variable == "WARNING":
             return logging.WARNING
-        elif variable == 'ERROR':
+        elif variable == "ERROR":
             return logging.ERROR
-        elif variable == 'CRITICAL':
+        elif variable == "CRITICAL":
             return logging.CRITICAL
         else:
             return logging.INFO

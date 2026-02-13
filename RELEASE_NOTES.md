@@ -1,21 +1,34 @@
-Aqui estão as Notas de Lançamento para a versão **v26.07.006**, focadas na manutenção da infraestrutura de build e distribuição do projeto.
+Aqui estão as Notas de Lançamento (Release Notes) para a versão **v26.07.007**, baseadas na análise técnica do commit fornecido.
 
 ---
 
-# 📝 Release Notes - v26.07.006
+# 📝 Release Notes - v26.07.007
+
+## Resumo da Versão
+Esta versão foca na manutenção da qualidade da documentação do projeto, corrigindo problemas de legibilidade e integridade de caracteres no arquivo principal de instrução.
+
+---
 
 ## 🚀 Features
-*Nenhuma nova funcionalidade implementada nesta versão.*
-
-## 🐛 Fixes
-*Nenhuma correção de bug reportada nesta versão.*
-
-## 🔧 Chore
-- **Melhoria no Gerenciamento de Distribuição (`setup.py`):**
-    - Atualização abrangente dos metadados do projeto para garantir conformidade com os padrões mais recentes de empacotamento.
-    - Implementação de tratamento de *encoding* aprimorado na leitura de arquivos auxiliares, prevenindo erros de instalação em diferentes sistemas operacionais.
-    - Expansão das informações detalhadas do projeto (descrição e documentação) integradas ao processo de build.
+*Nenhuma nova funcionalidade foi implementada nesta versão.*
 
 ---
-**Tech Lead Note:** 
-Esta versão foca exclusivamente na saúde do ecossistema de CI/CD e na integridade do pacote. A melhoria no `setup.py` é crítica para garantir que a distribuição do software seja resiliente a variações de ambiente (especialmente em relação ao encoding UTF-8) e que os metadados reflitam o estado atual do repositório.
+
+## 🐛 Fixes
+*Nenhuma correção de bug funcional ou de lógica de sistema foi reportada nesta versão.*
+
+---
+
+## 🔧 Chore
+* **Manutenção de Documentação:**
+    * Correção de erros ortográficos e gramaticais no arquivo `README.md`.
+    * Ajuste de problemas de codificação (*encoding*) para garantir a renderização correta de caracteres especiais em diferentes ambientes e editores.
+    * Refatoração pontual de 74 linhas para melhoria da clareza técnica.
+
+---
+
+### 🛠 Detalhes Técnicos
+* **Commit ID:** `3fc2985`
+* **Arquivos afetados:** `README.md`
+* **Impacto:** Baixo (Documentação)
+* **Autor:** Carlos Eduardo Duarte Schwalm (krlsedu)

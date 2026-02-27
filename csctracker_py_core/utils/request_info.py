@@ -3,8 +3,6 @@ import uuid
 
 from flask import g, request
 
-from csctracker_py_core.models.emuns.config import Config
-from csctracker_py_core.utils.configs import Configs
 from csctracker_py_core.utils.version import Version
 
 
@@ -37,10 +35,6 @@ class RequestInfo:
         _headers = request.headers
         _header = next((v for k, v in _headers.items() if k.lower() == header_name.lower()), None)
         return _header
-
-    @staticmethod
-    def get_api_token():
-        return Configs.get_env_variable(Config.API_TOKEN)
 
     @staticmethod
     def get_json_body():

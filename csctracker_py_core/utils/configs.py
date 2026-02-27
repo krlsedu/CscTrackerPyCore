@@ -93,3 +93,11 @@ class Configs:
             return logging.CRITICAL
         else:
             return logging.INFO
+
+    @staticmethod
+    def get_url_bff():
+        return Configs.get_env_variable(Config.URL_BFF)
+
+    @staticmethod
+    def get_url_repository():
+        return Configs.get_env_variable(Config.URL_REPOSITORY)

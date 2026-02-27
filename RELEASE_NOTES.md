@@ -1,22 +1,14 @@
-Aqui estão as Notas de Lançamento (Release Notes) para a versão **v26.09.002**, formatadas conforme solicitado.
+Aqui estão as Notas de Lançamento para a versão **v26.09.003**, focadas em manutenção e saúde do código.
 
 ---
 
-# 📝 Release Notes - v26.09.002
-
-## 🚀 Features
-- **Request Utilities Core**: Implementação de novos métodos utilitários no módulo `request_info.py`. Esta atualização visa padronizar e facilitar a extração de dados de requisições HTTP em toda a aplicação. As novas funcionalidades incluem:
-    - Extração simplificada de **Headers**.
-    - Captura de **Argumentos** (Query Parameters).
-    - Parsing de **Corpo JSON**.
-    - Recuperação de **API Tokens** de forma segura.
-
-## 🐛 Fixes
-- Nenhuma correção de bug foi incluída nesta versão.
+# 📝 Release Notes - v26.09.003
 
 ## 🔧 Chore
-- Nenhuma tarefa de manutenção ou infraestrutura foi realizada nesta versão.
+- **Refatoração e Limpeza Técnica (`csctracker_py_core`):**
+    - Remoção de imports não utilizados no utilitário `request_info.py`, otimizando o tempo de carregamento do módulo.
+    - Exclusão definitiva do método depreciado `get_api_token`. Esta ação visa reduzir o débito técnico e garantir que a biblioteca utilize apenas padrões atualizados de autenticação.
+    - *Commit:* `d0544e0`
 
 ---
-**Tech Lead:** Carlos Eduardo Duarte Schwalm  
-**Commit de Referência:** `f20d709`
+**Tech Lead Note:** Esta versão foca exclusivamente na estabilidade e limpeza do core da aplicação. Não há alterações de breaking changes para as funcionalidades atuais, uma vez que o método removido já estava marcado como depreciado.

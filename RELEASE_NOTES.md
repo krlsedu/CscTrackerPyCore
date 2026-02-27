@@ -1,34 +1,19 @@
-Aqui estão as Notas de Lançamento (Release Notes) para a versão **v26.07.007**, baseadas na análise técnica do commit fornecido.
+Aqui estão as Notas de Lançamento para a versão **v26.09.001**, elaboradas com foco em clareza técnica e padronização.
 
 ---
 
-# 📝 Release Notes - v26.07.007
-
-## Resumo da Versão
-Esta versão foca na manutenção da qualidade da documentação do projeto, corrigindo problemas de legibilidade e integridade de caracteres no arquivo principal de instrução.
-
----
+# 📝 Release Notes - v26.09.001
 
 ## 🚀 Features
-*Nenhuma nova funcionalidade foi implementada nesta versão.*
-
----
+- **Centralização de Configurações de Ambiente:** Implementação de métodos estáticos no utilitário de configuração (`csctracker_py_core/utils/configs.py`) para a recuperação padronizada das URLs do **BFF** e do **Repositório**. 
+    - As URLs agora são extraídas diretamente de variáveis de ambiente, facilitando a gestão de diferentes contextos (staging/production) e promovendo o desacoplamento do código.
 
 ## 🐛 Fixes
-*Nenhuma correção de bug funcional ou de lógica de sistema foi reportada nesta versão.*
-
----
+- Nenhuma correção de bug incluída nesta versão.
 
 ## 🔧 Chore
-* **Manutenção de Documentação:**
-    * Correção de erros ortográficos e gramaticais no arquivo `README.md`.
-    * Ajuste de problemas de codificação (*encoding*) para garantir a renderização correta de caracteres especiais em diferentes ambientes e editores.
-    * Refatoração pontual de 74 linhas para melhoria da clareza técnica.
+- Nenhuma alteração de infraestrutura, dependências ou manutenção interna.
 
 ---
-
-### 🛠 Detalhes Técnicos
-* **Commit ID:** `3fc2985`
-* **Arquivos afetados:** `README.md`
-* **Impacto:** Baixo (Documentação)
-* **Autor:** Carlos Eduardo Duarte Schwalm (krlsedu)
+**Tech Lead:** Carlos Eduardo Duarte Schwalm  
+**Commit de Referência:** `b522c55`

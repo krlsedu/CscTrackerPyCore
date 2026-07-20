@@ -1,14 +1,9 @@
-Aqui estão as Notas de Lançamento para a versão **v26.09.003**, focadas em manutenção e saúde do código.
+# Release Notes - v26.30.001
+
+## 🐛 Fixes
+
+* **Core / Repository:** Refinamento na lógica de verificação de tipos de investimento no `http_repository.py`. Foi adicionada a validação pela condição `investment_type_real_id`, garantindo maior precisão na identificação dos ativos. *(Commit: `2c304f6`)*
 
 ---
 
-# 📝 Release Notes - v26.09.003
-
-## 🔧 Chore
-- **Refatoração e Limpeza Técnica (`csctracker_py_core`):**
-    - Remoção de imports não utilizados no utilitário `request_info.py`, otimizando o tempo de carregamento do módulo.
-    - Exclusão definitiva do método depreciado `get_api_token`. Esta ação visa reduzir o débito técnico e garantir que a biblioteca utilize apenas padrões atualizados de autenticação.
-    - *Commit:* `d0544e0`
-
----
-**Tech Lead Note:** Esta versão foca exclusivamente na estabilidade e limpeza do core da aplicação. Não há alterações de breaking changes para as funcionalidades atuais, uma vez que o método removido já estava marcado como depreciado.
+*Nota: Esta é uma patch release focada em correção/refinamento de lógica. Não há itens para as seções **🚀 Features** ou **🔧 Chore** nesta versão.*

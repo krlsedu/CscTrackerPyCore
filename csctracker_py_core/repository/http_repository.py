@@ -62,7 +62,7 @@ class HttpRepository:
                 soup = BeautifulSoup(text, "html5lib")
                 self.get_values(soup, stock)
                 try:
-                    if stock["investment_type_id"] <= 4:
+                    if stock["investment_type_id"] <= 4  or (stock['investment_type_real_id'] is not None and stock['investment_type_real_id'] <= 4):
                         stock["pvp"] = self.get_info(stock, "vp", headers)
                 except Exception as e:
                     print(e, stock["ticker"], "pvp")

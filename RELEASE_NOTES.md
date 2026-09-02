@@ -1,9 +1,13 @@
-# Release Notes - v26.30.001
+Release Notes - v26.36.001
+
+Abaixo estão as notas de atualização para a versão v26.36.001. Esta versão foca na melhoria da comunicação e segurança interna, adicionando a injeção dinâmica de tokens de autorização nas requisições.
+
+## 🚀 Features
+* **Interceptor:** Atualização para buscar e definir dinamicamente o token de autorização nos cabeçalhos (`csctracker_py_core/utils/interceptor.py`).
+  * *Commit: `46f395a` | Autor: @krlsedu*
 
 ## 🐛 Fixes
+*(Nenhuma alteração desta categoria nesta versão)*
 
-* **Core / Repository:** Refinamento na lógica de verificação de tipos de investimento no `http_repository.py`. Foi adicionada a validação pela condição `investment_type_real_id`, garantindo maior precisão na identificação dos ativos. *(Commit: `2c304f6`)*
-
----
-
-*Nota: Esta é uma patch release focada em correção/refinamento de lógica. Não há itens para as seções **🚀 Features** ou **🔧 Chore** nesta versão.*
+## 🔧 Chore
+*(Nenhuma alteração desta categoria nesta versão)*

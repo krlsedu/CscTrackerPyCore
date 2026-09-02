@@ -1,6 +1,7 @@
 import logging
 import threading
 import time
+import token
 from datetime import datetime
 
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
@@ -81,9 +82,12 @@ class Interceptor:
                 "request_id": RequestInfo.get_request_id(),
                 "date_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
             }
+            token = RequestInfo.get_header("Authorization")
+            if not token:
+                token = f"Bearer {Configs.get_env_variable(Config.API_TOKEN)}"
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {Configs.get_env_variable(Config.API_TOKEN)}",
+                "Authorization": token,
                 "x-correlation-id": RequestInfo.get_request_id(),
             }
             args_ = {

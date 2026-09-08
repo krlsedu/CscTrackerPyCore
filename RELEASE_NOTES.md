@@ -1,13 +1,13 @@
-Release Notes - v26.37.002
+Release Notes - v26.37.003
 
-Abaixo estão as notas de atualização para a versão v26.37.002. Esta release foca na adição de suporte e tratamento específico para BFF (Backend for Frontend) no core da aplicação.
+Abaixo estão as notas de atualização para a versão v26.37.003. Esta release foca em melhorias na esteira de CI/CD, especificamente no detalhamento dos logs de publicação.
 
 ## 🚀 Features
-* **Starter:** Adiciona o parâmetro `is_bff` e o repassa ao `Interceptor` para tratamento específico de BFF (`csctracker_py_core/starter.py`).
-  * *Commit: `4c24673` | Autor: @krlsedu*
+*(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🐛 Fixes
 *(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🔧 Chore
-*(Nenhuma alteração desta categoria nesta versão)*
+* **CI/CD:** Habilita o modo verboso para a etapa de publicação no PyPI no workflow do GitHub Actions (`.github/workflows/build.yml`).
+  * *Commit: `1d75a93` | Autor: @krlsedu*

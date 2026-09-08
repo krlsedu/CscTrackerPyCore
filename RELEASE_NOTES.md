@@ -1,10 +1,10 @@
-Release Notes - v26.36.001
+Release Notes - v26.37.001
 
-Abaixo estão as notas de atualização para a versão v26.36.001. Esta versão foca na melhoria da comunicação e segurança interna, adicionando a injeção dinâmica de tokens de autorização nas requisições.
+Abaixo estão as notas de atualização para a versão v26.37.001. Esta release foca na melhoria do interceptor para suportar URLs específicas de BFF configuráveis via variáveis de ambiente.
 
 ## 🚀 Features
-* **Interceptor:** Atualização para buscar e definir dinamicamente o token de autorização nos cabeçalhos (`csctracker_py_core/utils/interceptor.py`).
-  * *Commit: `46f395a` | Autor: @krlsedu*
+* **Interceptor:** Atualização para lidar com URLs de requisição específicas do BFF baseadas em variáveis de ambiente (`csctracker_py_core/utils/interceptor.py`).
+  * *Commit: `f15c284` | Autor: @krlsedu*
 
 ## 🐛 Fixes
 *(Nenhuma alteração desta categoria nesta versão)*

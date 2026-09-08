@@ -16,6 +16,7 @@ CscTrackerPyCore é uma biblioteca Python base desenvolvida para padronizar e ac
     - **Interceptor de Requisições**: Registro detalhado de chamadas HTTP (método, path, status, duração) com opção de persistência remota para auditoria.
 - **Documentação Automática**: Geração de especificação **Swagger (OpenAPI)** simplificada.
 - **Processamento em Background**: Integração com `csctracker-queue-scheduler` para execução de tarefas assíncronas e agendadas.
+- **Graceful Shutdown para Docker Swarm**: Encerramento controlado em rolling updates, aguardando término de requisições HTTP e esvaziamento total da fila do scheduler antes do encerramento do processo.
 - **Repositórios Remotos**: Abstração para comunicação entre serviços via HTTP com tratamento de headers e correlação.
 
 ## Requisitos
@@ -57,6 +58,7 @@ A biblioteca é configurada principalmente via variáveis de ambiente, suportand
 | `LOG_RESPONSE_BODY` | Se `True`, inclui o corpo da resposta nos logs | `False` |
 | `URL_BFF` | URL base para persistência de logs de requisição | `http://api-gateway/` |
 | `API_TOKEN` | Token de autorização para chamadas externas | `seu_token_aqui` |
+| `SHUTDOWN_TIMEOUT` | Tempo limite (segundos) para conclusão de requisições e tarefas em background durante o shutdown | `30` |
 | `DEBUG` | Ativa o modo debug do Flask se definido como `1` | `0` |
 
 ## Uso Didático
@@ -94,11 +96,52 @@ Uma vez iniciado o `Starter`, todos os logs do sistema usarão o formato JSON e 
 http_repo = starter.get_http_repository()
 ```
 
+### 4. Graceful Shutdown e Ganchos Customizados
+
+Ao receber sinais como `SIGTERM` (pelo Docker Swarm) ou `SIGINT` (Ctrl+C), a aplicação:
+1. Aguarda a finalização de todas as requisições HTTP ativas.
+2. Aguarda o esvaziamento completo e processamento da fila do `SchedulerService`.
+3. Executa ganchos de limpeza customizados registrados via `starter.register_shutdown_hook(...)`.
+4. Finaliza o processo com segurança respeitando o `SHUTDOWN_TIMEOUT`.
+
+```python
+def cleanup_resources():
+    print("Fechando conexões e pools externos...")
+
+starter.register_shutdown_hook(cleanup_resources)
+```
+
+## Implantação no Docker Swarm
+
+Para garantir atualizações contínuas (*rolling updates zero-downtime*), configure o `docker-compose.yml` da stack no Swarm utilizando `order: start-first` e defina `stop_grace_period` com um valor superior ao `SHUTDOWN_TIMEOUT`:
+
+```yaml
+version: "3.8"
+
+services:
+  notification-ai:
+    image: krlsedu/csctracker-notification-ai:26.37.002
+    stop_grace_period: 45s # Superior ao SHUTDOWN_TIMEOUT da aplicação
+    environment:
+      - SHUTDOWN_TIMEOUT=30
+      - URL_REPOSITORY=http://bff:8080/repository-clickhouse/
+      - URL_BFF=http://bff:8080/
+    networks:
+      - swarm_network
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+```
+
 ## Estrutura do Projeto
 
-- `Starter`: Orquestrador principal que configura Flask, CORS, Métricas e Swagger.
+- `Starter`: Orquestrador principal que configura Flask, CORS, Métricas, Swagger e Graceful Shutdown.
 - `Configs`: Gerencia o carregamento de variáveis de ambiente e a configuração do logger JSON.
-- `Interceptor`: Middleware Flask que captura dados de performance e logs de entrada/saída.
+- `GracefulShutdown`: Gerenciador de encerramento suave e sincronização de tarefas/requisições.
+- `Interceptor`: Middleware Flask que captura dados de performance, telemetria e controla requisições ativas.
 - `HttpRepository`: Facilita requisições HTTP externas com injeção de headers de segurança e rastreio.
 - `RequestInfo`: Utilitário para gerenciar IDs de correlação (Correlation IDs) entre threads.
 

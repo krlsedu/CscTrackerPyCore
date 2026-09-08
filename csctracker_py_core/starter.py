@@ -11,6 +11,7 @@ from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.http_repository import HttpRepository
 from csctracker_py_core.repository.remote_repository import RemoteRepository
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.graceful_shutdown import GracefulShutdown
 from csctracker_py_core.utils.interceptor import Interceptor
 from csctracker_py_core.utils.version import Version
 
@@ -31,6 +32,9 @@ class Starter:
         self.cors = CORS(self.app)
         self.app.config["CORS_HEADERS"] = "Content-Type"
         self.config = Configs(os.getenv("PROFILE", "dev"))
+        shutdown_timeout = Configs.get_env_variable(Config.SHUTDOWN_TIMEOUT, default=30)
+        self.graceful_shutdown = GracefulShutdown.get_instance(timeout=shutdown_timeout)
+        self.graceful_shutdown.register_signals()
         self.remote_repository = RemoteRepository()
         self.http_repository = HttpRepository(remote_repository=self.remote_repository)
         self.interceptor = Interceptor(
@@ -41,6 +45,12 @@ class Starter:
             group_by="endpoint",
             default_labels={"application": Version.get_app_name()},
         )
+
+    def register_shutdown_hook(self, callback):
+        self.graceful_shutdown.register_shutdown_hook(callback)
+
+    def get_graceful_shutdown(self):
+        return self.graceful_shutdown
 
     def get_remote_repository(self):
         return self.remote_repository

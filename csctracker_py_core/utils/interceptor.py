@@ -1,7 +1,6 @@
 import logging
 import threading
 import time
-import token
 from datetime import datetime
 
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
@@ -10,6 +9,7 @@ from flask import Flask, request, g
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.http_repository import HttpRepository
 from csctracker_py_core.utils.configs import Configs
+from csctracker_py_core.utils.graceful_shutdown import GracefulShutdown
 from csctracker_py_core.utils.request_info import RequestInfo
 from csctracker_py_core.utils.utils import Utils
 from csctracker_py_core.utils.version import Version
@@ -27,11 +27,16 @@ class Interceptor:
     def __init(self):
         @self.app.before_request
         def start_timer():
+            GracefulShutdown.get_instance().start_request()
             g.start = time.time()
             correlation_id = RequestInfo.get_correlation_id()
             g.correlation_id = correlation_id
             thread = threading.current_thread()
             thread.correlation_id = correlation_id
+
+        @self.app.teardown_request
+        def teardown_request(exception=None):
+            GracefulShutdown.get_instance().end_request()
 
         @self.app.after_request
         def log_request(response):

@@ -16,7 +16,7 @@ from csctracker_py_core.utils.version import Version
 
 
 class Starter:
-    def __init__(self, static_folder="static", save_request=False):
+    def __init__(self, static_folder="static", save_request=False, is_bff=False):
         self.logger = logging.getLogger()
         self.app = Flask(__name__, static_folder=static_folder)
         try:
@@ -34,7 +34,7 @@ class Starter:
         self.remote_repository = RemoteRepository()
         self.http_repository = HttpRepository(remote_repository=self.remote_repository)
         self.interceptor = Interceptor(
-            self.app, self.http_repository, save_request=save_request
+            self.app, self.http_repository, save_request=save_request, is_bff=is_bff,
         )
         self.metrics = PrometheusMetrics(
             self.app,

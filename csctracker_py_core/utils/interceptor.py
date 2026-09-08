@@ -16,11 +16,12 @@ from csctracker_py_core.utils.version import Version
 
 
 class Interceptor:
-    def __init__(self, app: Flask, http_repository: HttpRepository, save_request=False):
+    def __init__(self, app: Flask, http_repository: HttpRepository, save_request=False, is_bff=False):
         self.logger = logging.getLogger()
         self.app = app
         self.http_repository = http_repository
         self.save_request = save_request
+        self.is_bff = is_bff
         self.__init()
 
     def __init(self):
@@ -90,8 +91,12 @@ class Interceptor:
                 "Authorization": token,
                 "x-correlation-id": RequestInfo.get_request_id(),
             }
+            if self.is_bff:
+                url_hist = f"{Configs.get_env_variable(Config.RABBITMQ_HOST)}/requests"
+            else:
+                url_hist = f"{Configs.get_env_variable(Config.URL_BFF)}rabbit/requests"
             args_ = {
-                "url": f"{Configs.get_env_variable(Config.URL_BFF)}rabbit/requests",
+                "url": url_hist,
                 "body": request_info_,
                 "headers": headers,
             }

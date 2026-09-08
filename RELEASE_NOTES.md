@@ -1,13 +1,13 @@
-Release Notes - v26.37.003
+Release Notes - v26.37.004
 
-Abaixo estão as notas de atualização para a versão v26.37.003. Esta release foca em melhorias na esteira de CI/CD, especificamente no detalhamento dos logs de publicação.
+Abaixo estão as notas de atualização para a versão v26.37.004. Esta versão tem como foco principal a implementação do mecanismo de encerramento gracioso (graceful shutdown) para a aplicação.
 
 ## 🚀 Features
-*(Nenhuma alteração desta categoria nesta versão)*
+* **Core/Utils:** Implementação do mecanismo de graceful shutdown (`csctracker_py_core/utils/graceful_shutdown.py`).
+  * *Commit: `6425590` | Autor: @krlsedu*
 
 ## 🐛 Fixes
 *(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🔧 Chore
-* **CI/CD:** Habilita o modo verboso para a etapa de publicação no PyPI no workflow do GitHub Actions (`.github/workflows/build.yml`).
-  * *Commit: `1d75a93` | Autor: @krlsedu*
+*(Nenhuma alteração desta categoria nesta versão)*

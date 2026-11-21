@@ -9,7 +9,7 @@ CscTrackerPyCore é uma biblioteca Python base desenvolvida para padronizar e ac
 
 ## Principais Funcionalidades
 
-- **Starter Facilitado**: Inicialização rápida de aplicações Flask com suporte a CORS e tratamento de variáveis de ambiente.
+- **Starter Facilitado (WSGI Nativo)**: Inicialização rápida de aplicações Flask com suporte a CORS, servidor WSGI de produção (**Waitress**, multi-thread e sem `fork()`) por padrão no `starter.start()` e fallback automático para Werkzeug em desenvolvimento local via `DEBUG=1`.
 - **Logging Estruturado**: Formatação automática de logs em JSON com inclusão de `requestId`, `appName` e `appVersion` para melhor rastreabilidade.
 - **Observabilidade**:
     - Integração nativa com **Prometheus** para coleta de métricas de endpoints.
@@ -24,6 +24,7 @@ CscTrackerPyCore é uma biblioteca Python base desenvolvida para padronizar e ac
 - Python 3.9+
 - Flask
 - Flask-CORS
+- Waitress (WSGI de produção)
 - Prometheus Flask Exporter
 - Flask Swagger Generator
 - Python JSON Logger
@@ -59,7 +60,9 @@ A biblioteca é configurada principalmente via variáveis de ambiente, suportand
 | `URL_BFF` | URL base para persistência de logs de requisição | `http://api-gateway/` |
 | `API_TOKEN` | Token de autorização para chamadas externas | `seu_token_aqui` |
 | `SHUTDOWN_TIMEOUT` | Tempo limite (segundos) para conclusão de requisições e tarefas em background durante o shutdown | `30` |
-| `DEBUG` | Ativa o modo debug do Flask se definido como `1` | `0` |
+| `WSGI_THREADS` | Número de threads do pool WSGI do Waitress em produção | `32` |
+| `WSGI_CHANNEL_TIMEOUT` | Timeout de ociosidade de canal HTTP (segundos) no Waitress | `600` |
+| `DEBUG` | Quando `1`, utiliza o servidor de desenvolvimento Werkzeug (`app.run()`) no `starter.start()`; caso contrário, sobe via Waitress | `0` |
 
 ## Uso Didático
 
@@ -82,6 +85,7 @@ def hello():
     return {"message": "CscTrackerPyCore is running!"}
 
 if __name__ == '__main__':
+    # Produção (padrão): sobe Waitress WSGI. Local dev (DEBUG=1): sobe Werkzeug.
     starter.start()
 ```
 
@@ -112,6 +116,17 @@ starter.register_shutdown_hook(cleanup_resources)
 ```
 
 ## Implantação no Docker Swarm
+
+Nos serviços que consomem `csctracker-py-core`, recomenda-se manter `CMD ["python", "-u", "app.py"]` (que inicia o Waitress automaticamente via `starter.start()` quando `DEBUG` não é `1`) e copiar `requirements.txt` antes do código-fonte no `Dockerfile` para aproveitar o cache de layers:
+
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app
+CMD ["python", "-u", "app.py"]
+```
 
 Para garantir atualizações contínuas (*rolling updates zero-downtime*), configure o `docker-compose.yml` da stack no Swarm utilizando `order: start-first` e defina `stop_grace_period` com um valor superior ao `SHUTDOWN_TIMEOUT`:
 

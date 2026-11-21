@@ -1,6 +1,7 @@
 import logging
 import os
 
+import waitress
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
 from flask import Flask
 from flask_cors import CORS
@@ -45,6 +46,15 @@ class Starter:
             group_by="endpoint",
             default_labels={"application": Version.get_app_name()},
         )
+        self._swagger_initialized = False
+
+    @staticmethod
+    def _get_int_env(key: Config, default: int) -> int:
+        value = Configs.get_env_variable(key, default=default)
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return default
 
     def register_shutdown_hook(self, callback):
         self.graceful_shutdown.register_shutdown_hook(callback)
@@ -62,12 +72,36 @@ class Starter:
         return self.app
 
     def start(self):
-        SwaggerView.init(
+        if not self._swagger_initialized:
+            SwaggerView.init(
+                self.app,
+                application_name=Version.get_app_name(),
+                application_version=Version.get_version(),
+                swagger_destination_path="swagger.yaml",
+            )
+            self._swagger_initialized = True
+
+        port = self._get_int_env(Config.PORT, default=5000)
+
+        if Configs.is_debug():
+            self.logger.info(
+                f"Starting Flask development server (DEBUG=1) on 0.0.0.0:{port}"
+            )
+            self.app.run(host="0.0.0.0", port=port)
+            return
+
+        threads = self._get_int_env(Config.WSGI_THREADS, default=32)
+        channel_timeout = self._get_int_env(Config.WSGI_CHANNEL_TIMEOUT, default=600)
+        self.logger.info(
+            f"Starting Waitress WSGI server on 0.0.0.0:{port} "
+            f"(threads={threads}, channel_timeout={channel_timeout}s)"
+        )
+        server = waitress.create_server(
             self.app,
-            application_name=Version.get_app_name(),
-            application_version=Version.get_version(),
-            swagger_destination_path="swagger.yaml",
+            host="0.0.0.0",
+            port=port,
+            threads=threads,
+            channel_timeout=channel_timeout,
         )
-        self.app.run(
-            host="0.0.0.0", port=Configs.get_env_variable(Config.PORT, default=5000)
-        )
+        self.graceful_shutdown.set_server_close_hook(server.close)
+        server.run()

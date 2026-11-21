@@ -18,6 +18,7 @@ class GracefulShutdown:
         self.active_requests = 0
         self._condition = threading.Condition(self._lock)
         self._shutdown_hooks: List[Callable] = []
+        self._server_close_hook: Optional[Callable] = None
         self.logger = logging.getLogger()
 
     @classmethod
@@ -59,6 +60,10 @@ class GracefulShutdown:
         with self._lock:
             self._shutdown_hooks.append(callback)
 
+    def set_server_close_hook(self, callback: Optional[Callable]):
+        with self._lock:
+            self._server_close_hook = callback
+
     def _handle_signal(self, signum, frame):
         signal_name = "SIGTERM" if signum == signal.SIGTERM else ("SIGINT" if signum == signal.SIGINT else str(signum))
         self.logger.info(f"Signal {signal_name} received. Starting graceful shutdown...")
@@ -75,6 +80,17 @@ class GracefulShutdown:
     def _wait_and_exit(self, exit_process: bool = True, override_timeout: Optional[int] = None):
         timeout = override_timeout if override_timeout is not None else self.timeout
         start_time = time.time()
+
+        # 0. Stop accepting new HTTP connections if a WSGI server close hook is registered
+        with self._lock:
+            server_close_hook = self._server_close_hook
+            self._server_close_hook = None
+
+        if server_close_hook is not None:
+            try:
+                server_close_hook()
+            except Exception as e:
+                self.logger.error(f"Error closing WSGI server listener: {e}")
 
         # 1. Wait for active HTTP requests to reach 0
         with self._condition:

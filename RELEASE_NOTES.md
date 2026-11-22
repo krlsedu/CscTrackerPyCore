@@ -1,10 +1,10 @@
-Release Notes - v26.47.001
+Release Notes - v26.47.002
 
-Abaixo estão as notas de atualização para a versão v26.47.001. Esta versão introduz o servidor WSGI de nível de produção Waitress ao Starter da biblioteca central, fornecendo uma alternativa robusta e compatível com múltiplos ambientes ao servidor de desenvolvimento padrão do Flask. A atualização também engloba mecanismos avançados de graceful shutdown, documentação técnica expandida e uma cobertura abrangente de testes unitários para a inicialização e encerramento do serviço.
+Abaixo estão as notas de atualização para a versão v26.47.002. Esta versão introduz a preparação do ecossistema do core para compatibilidade com o Python 3.15, atualizando dependências-chave e matrizes de CI/CD. Além disso, implementa um mecanismo de drain seguro e graceful shutdown na inicialização da aplicação, garantindo o processamento completo de requisições em trânsito antes da finalização de serviços e aumentando a resiliência operacional.
 
 ## 🚀 Features
-* **Starter / WSGI:** Implementação do servidor de aplicação WSGI Waitress no ciclo de inicialização do Starter, possibilitando a execução da aplicação Flask sobre um servidor de produção puro Python por meio de novas chaves de configuração (`csctracker_py_core/starter.py`). A alteração inclui o enriquecimento dos utilitários de graceful shutdown para interceptar sinais do sistema operacional e encerrar o Waitress de maneira controlada, mitigando a perda de requisições em voo, além de adicionar suite de testes dedicada, atualização das dependências e documentação arquitetural no repositório.
-  * *Commit: `fdb68d1` | Autor: @krlsedu*
+* **Inicialização e Resiliência (Starter / Graceful Shutdown):** Implementação de suporte preliminar ao runtime Python 3.15 e introdução de um fluxo de encerramento controlado (drain seguro) durante o ciclo de vida da aplicação WSGI. A mudança intercepta sinais de término do sistema operacional para suspender a aceitação de novas conexões HTTP e aguardar o escoamento de requisições ativas por um tempo limite parametrizado, evitando encerramentos abruptos e consequentes falhas de comunicação interna em ambiente de container. Adicionalmente, as suítes de testes foram expandidas e as dependências e rotinas de pipeline do GitHub Actions foram ajustadas para assegurar compatibilidade e cobertura sobre o novo fluxo de shutdown (`csctracker_py_core/starter.py`).
+  * *Commit: `fb4cd23` | Autor: @krlsedu*
 
 ## 🐛 Fixes
 *(Nenhuma alteração desta categoria nesta versão)*

@@ -1,8 +1,11 @@
 import logging
 import os
+import socket
+import threading
 import time
 
 import waitress
+from waitress import server as waitress_server
 from waitress import wasyncore
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
 from flask import Flask
@@ -59,10 +62,88 @@ class Starter:
             return default
 
     @staticmethod
+    def _run_on_waitress_loop(triggers, callback, timeout: float = 1.5):
+        executed = False
+        exec_lock = threading.Lock()
+
+        def _run_once():
+            nonlocal executed
+            with exec_lock:
+                if executed:
+                    return
+                executed = True
+            callback()
+
+        for trigger in triggers:
+            if not getattr(trigger, "_closed", False) and hasattr(trigger, "pull_trigger"):
+                done = threading.Event()
+
+                def _thunk():
+                    try:
+                        _run_once()
+                    finally:
+                        done.set()
+
+                try:
+                    trigger.pull_trigger(_thunk)
+                    if done.wait(timeout=timeout):
+                        return
+                except Exception:
+                    pass
+
+        _run_once()
+
+    @staticmethod
     def _register_waitress_shutdown_hooks(graceful_shutdown: GracefulShutdown, server):
+        server_map = getattr(server, "_map", None)
+        if server_map is None:
+            server_map = getattr(server, "map", None)
+
+        def _collect_servers_and_triggers():
+            servers = []
+            triggers = []
+            if isinstance(server_map, dict):
+                for obj in list(server_map.values()):
+                    if isinstance(obj, waitress_server.BaseWSGIServer):
+                        servers.append(obj)
+                        trig = getattr(obj, "trigger", None)
+                        if trig is not None and trig not in triggers:
+                            triggers.append(trig)
+            if not servers and isinstance(server, wasyncore.dispatcher):
+                servers.append(server)
+                trig = getattr(server, "trigger", None)
+                if trig is not None and trig not in triggers:
+                    triggers.append(trig)
+            return servers, triggers
+
+        known_servers, known_triggers = _collect_servers_and_triggers()
+
+        def _get_servers_and_triggers():
+            servers, triggers = _collect_servers_and_triggers()
+            for srv in known_servers:
+                if srv not in servers:
+                    servers.append(srv)
+            for trig in known_triggers:
+                if trig not in triggers:
+                    triggers.append(trig)
+            return servers, triggers
+
         def close_listener():
-            # Close only the accepting socket so in-flight responses can still use server.trigger
-            wasyncore.dispatcher.close(server)
+            servers, triggers = _get_servers_and_triggers()
+
+            def _close_listeners_sync():
+                # Close only accepting sockets on the wasyncore thread so select() releases
+                # kernel socket refs immediately on Linux while keeping trigger open for drain.
+                for srv in servers:
+                    sock = getattr(srv, "socket", None)
+                    if sock is not None:
+                        try:
+                            sock.shutdown(socket.SHUT_RDWR)
+                        except OSError:
+                            pass
+                    wasyncore.dispatcher.close(srv)
+
+            Starter._run_on_waitress_loop(triggers, _close_listeners_sync, timeout=1.5)
 
         def finalize_server(remaining_timeout: float):
             deadline = time.time() + max(0.0, remaining_timeout)
@@ -73,8 +154,7 @@ class Starter:
                     timeout=max(0.1, deadline - time.time()),
                 )
 
-            server_map = getattr(server, "_map", None)
-            if server_map is not None:
+            if isinstance(server_map, dict):
                 while time.time() < deadline:
                     if not any(
                         getattr(ch, "total_outbufs_len", 0) > 0
@@ -83,22 +163,35 @@ class Starter:
                         break
                     time.sleep(0.01)
 
-                trigger = getattr(server, "trigger", None)
-                for ch in list(server_map.values()):
-                    if ch is server or ch is trigger:
-                        continue
-                    if hasattr(ch, "close"):
+            servers, triggers = _get_servers_and_triggers()
+            if not triggers:
+                trig = getattr(server, "trigger", None)
+                if trig is not None:
+                    triggers.append(trig)
+
+            def _close_remaining_sync():
+                if isinstance(server_map, dict):
+                    for ch in list(server_map.values()):
+                        if ch in servers or ch in triggers:
+                            continue
+                        if hasattr(ch, "close"):
+                            try:
+                                ch.close()
+                            except Exception:
+                                pass
+
+                for trig in triggers:
+                    if hasattr(trig, "close"):
                         try:
-                            ch.close()
+                            trig.close()
                         except Exception:
                             pass
 
-            trigger = getattr(server, "trigger", None)
-            if trigger is not None:
-                try:
-                    trigger.close()
-                except Exception:
-                    pass
+            Starter._run_on_waitress_loop(
+                triggers,
+                _close_remaining_sync,
+                timeout=min(1.5, max(0.2, deadline - time.time())),
+            )
 
         graceful_shutdown.set_server_close_hook(close_listener)
         graceful_shutdown.set_server_post_drain_hook(finalize_server)

@@ -250,9 +250,10 @@ class TestStarterWsgi(unittest.TestCase):
         drain_thread.start()
 
         deadline = time.time() + 2
-        while server.accepting and time.time() < deadline:
+        while (server.accepting or server.socket is not None) and time.time() < deadline:
             time.sleep(0.01)
         self.assertFalse(server.accepting)
+        self.assertIsNone(server.socket)
 
         with self.assertRaises(OSError):
             with socket.create_connection(("127.0.0.1", port), timeout=0.5):

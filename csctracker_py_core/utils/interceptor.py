@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
-from flask import Flask, request, g
+from flask import Flask, Response, request, g
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.repository.http_repository import HttpRepository
@@ -27,16 +27,30 @@ class Interceptor:
     def __init(self):
         @self.app.before_request
         def start_timer():
-            GracefulShutdown.get_instance().start_request()
             g.start = time.time()
             correlation_id = RequestInfo.get_correlation_id()
             g.correlation_id = correlation_id
+            g._counted_request = False
             thread = threading.current_thread()
             thread.correlation_id = correlation_id
 
+            shutdown = GracefulShutdown.get_instance()
+            if shutdown.is_shutting_down:
+                return Response(
+                    '{"error": "Service shutting down"}',
+                    status=503,
+                    mimetype="application/json",
+                    headers={"Connection": "close"},
+                )
+
+            shutdown.start_request()
+            g._counted_request = True
+
         @self.app.teardown_request
         def teardown_request(exception=None):
-            GracefulShutdown.get_instance().end_request()
+            if getattr(g, "_counted_request", False):
+                g._counted_request = False
+                GracefulShutdown.get_instance().end_request()
 
         @self.app.after_request
         def log_request(response):

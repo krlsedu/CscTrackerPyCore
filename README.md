@@ -21,7 +21,7 @@ CscTrackerPyCore é uma biblioteca Python base desenvolvida para padronizar e ac
 
 ## Requisitos
 
-- Python 3.9+
+- Python 3.11+ (validado em Python 3.15)
 - Flask
 - Flask-CORS
 - Waitress (WSGI de produção)
@@ -120,7 +120,7 @@ starter.register_shutdown_hook(cleanup_resources)
 Nos serviços que consomem `csctracker-py-core`, recomenda-se manter `CMD ["python", "-u", "app.py"]` (que inicia o Waitress automaticamente via `starter.start()` quando `DEBUG` não é `1`) e copiar `requirements.txt` antes do código-fonte no `Dockerfile` para aproveitar o cache de layers:
 
 ```dockerfile
-FROM python:3.11-slim
+FROM python:3.15-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

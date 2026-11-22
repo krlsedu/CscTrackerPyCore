@@ -157,7 +157,7 @@ class HttpRepository:
         value="text",
     ):
         if type == "text":
-            obj = soup.find_all(text=f"{text}")
+            obj = soup.find_all(string=f"{text}")
         elif type == "class":
             obj = soup.find_all(class_=f"{text}")
         elif type == "title":

@@ -6,8 +6,8 @@ VERSION = get_version()
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt") as f:
-    required = f.read().splitlines()
+with open("requirements.txt", encoding="utf-8") as f:
+    required = [line.strip() for line in f if line.strip()]
 
 setuptools.setup(
     name="csctracker-py-core",
@@ -47,13 +47,14 @@ setuptools.setup(
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+        "Programming Language :: Python :: 3.15",
         "Operating System :: OS Independent",
     ],
     install_requires=required,
-    python_requires=">=3.9",
+    python_requires=">=3.11",
     include_package_data=True,
 )

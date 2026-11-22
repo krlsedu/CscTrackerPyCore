@@ -4,14 +4,14 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from pythonjsonlogger import jsonlogger
+from pythonjsonlogger.json import JsonFormatter
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.utils.request_info import RequestInfo
 from csctracker_py_core.utils.version import Version
 
 
-class CustomJsonFormatter(jsonlogger.JsonFormatter):
+class CustomJsonFormatter(JsonFormatter):
     def add_fields(self, log_record, record, message_dict):
         super().add_fields(log_record, record, message_dict)
         log_record["requestId"] = RequestInfo.get_request_id()

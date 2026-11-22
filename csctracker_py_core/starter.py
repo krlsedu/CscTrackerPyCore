@@ -1,7 +1,9 @@
 import logging
 import os
+import time
 
 import waitress
+from waitress import wasyncore
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
 from flask import Flask
 from flask_cors import CORS
@@ -56,6 +58,51 @@ class Starter:
         except (TypeError, ValueError):
             return default
 
+    @staticmethod
+    def _register_waitress_shutdown_hooks(graceful_shutdown: GracefulShutdown, server):
+        def close_listener():
+            # Close only the accepting socket so in-flight responses can still use server.trigger
+            wasyncore.dispatcher.close(server)
+
+        def finalize_server(remaining_timeout: float):
+            deadline = time.time() + max(0.0, remaining_timeout)
+            task_dispatcher = getattr(server, "task_dispatcher", None)
+            if task_dispatcher is not None:
+                task_dispatcher.shutdown(
+                    cancel_pending=False,
+                    timeout=max(0.1, deadline - time.time()),
+                )
+
+            server_map = getattr(server, "_map", None)
+            if server_map is not None:
+                while time.time() < deadline:
+                    if not any(
+                        getattr(ch, "total_outbufs_len", 0) > 0
+                        for ch in list(server_map.values())
+                    ):
+                        break
+                    time.sleep(0.01)
+
+                trigger = getattr(server, "trigger", None)
+                for ch in list(server_map.values()):
+                    if ch is server or ch is trigger:
+                        continue
+                    if hasattr(ch, "close"):
+                        try:
+                            ch.close()
+                        except Exception:
+                            pass
+
+            trigger = getattr(server, "trigger", None)
+            if trigger is not None:
+                try:
+                    trigger.close()
+                except Exception:
+                    pass
+
+        graceful_shutdown.set_server_close_hook(close_listener)
+        graceful_shutdown.set_server_post_drain_hook(finalize_server)
+
     def register_shutdown_hook(self, callback):
         self.graceful_shutdown.register_shutdown_hook(callback)
 
@@ -103,5 +150,5 @@ class Starter:
             threads=threads,
             channel_timeout=channel_timeout,
         )
-        self.graceful_shutdown.set_server_close_hook(server.close)
+        self._register_waitress_shutdown_hooks(self.graceful_shutdown, server)
         server.run()

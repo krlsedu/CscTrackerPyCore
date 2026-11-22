@@ -19,6 +19,7 @@ class GracefulShutdown:
         self._condition = threading.Condition(self._lock)
         self._shutdown_hooks: List[Callable] = []
         self._server_close_hook: Optional[Callable] = None
+        self._server_post_drain_hook: Optional[Callable[[float], None]] = None
         self.logger = logging.getLogger()
 
     @classmethod
@@ -64,6 +65,10 @@ class GracefulShutdown:
         with self._lock:
             self._server_close_hook = callback
 
+    def set_server_post_drain_hook(self, callback: Optional[Callable[[float], None]]):
+        with self._lock:
+            self._server_post_drain_hook = callback
+
     def _handle_signal(self, signum, frame):
         signal_name = "SIGTERM" if signum == signal.SIGTERM else ("SIGINT" if signum == signal.SIGINT else str(signum))
         self.logger.info(f"Signal {signal_name} received. Starting graceful shutdown...")
@@ -103,6 +108,18 @@ class GracefulShutdown:
                     )
                     break
                 self._condition.wait(timeout=min(remaining, 0.5))
+
+        # 1.5. Finalize WSGI server (flush response buffers and close wake-up trigger)
+        with self._lock:
+            post_drain_hook = self._server_post_drain_hook
+            self._server_post_drain_hook = None
+
+        if post_drain_hook is not None:
+            try:
+                remaining = max(0.0, timeout - (time.time() - start_time))
+                post_drain_hook(remaining)
+            except Exception as e:
+                self.logger.error(f"Error finalizing WSGI server shutdown: {e}")
 
         # 2. Wait for SchedulerService queue to be empty and pending tasks to finish
         self._wait_for_scheduler_queue(start_time, timeout)

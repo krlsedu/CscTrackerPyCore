@@ -1,13 +1,13 @@
-Release Notes - v26.47.002
+Release Notes - v26.47.003
 
-Abaixo estão as notas de atualização para a versão v26.47.002. Esta versão introduz a preparação do ecossistema do core para compatibilidade com o Python 3.15, atualizando dependências-chave e matrizes de CI/CD. Além disso, implementa um mecanismo de drain seguro e graceful shutdown na inicialização da aplicação, garantindo o processamento completo de requisições em trânsito antes da finalização de serviços e aumentando a resiliência operacional.
+Abaixo estão as notas de atualização para a versão v26.47.003. Esta versão tem como foco principal aprimorar a resiliência operacional da aplicação por meio da correção do mecanismo de desligamento gracioso (graceful shutdown) do servidor Waitress em ambientes Linux. As modificações garantem o tratamento adequado de sinais de encerramento do sistema operacional, prevenindo processos zumbis ou paradas forçadas durante o ciclo de vida dos containers e serviços.
 
 ## 🚀 Features
-* **Inicialização e Resiliência (Starter / Graceful Shutdown):** Implementação de suporte preliminar ao runtime Python 3.15 e introdução de um fluxo de encerramento controlado (drain seguro) durante o ciclo de vida da aplicação WSGI. A mudança intercepta sinais de término do sistema operacional para suspender a aceitação de novas conexões HTTP e aguardar o escoamento de requisições ativas por um tempo limite parametrizado, evitando encerramentos abruptos e consequentes falhas de comunicação interna em ambiente de container. Adicionalmente, as suítes de testes foram expandidas e as dependências e rotinas de pipeline do GitHub Actions foram ajustadas para assegurar compatibilidade e cobertura sobre o novo fluxo de shutdown (`csctracker_py_core/starter.py`).
-  * *Commit: `fb4cd23` | Autor: @krlsedu*
+*(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🐛 Fixes
-*(Nenhuma alteração desta categoria nesta versão)*
+* **Servidor WSGI / Ciclo de Vida:** Correção no gerenciamento do ciclo de vida e encerramento (shutdown) do servidor WSGI Waitress em plataformas Linux. A implementação aprimorou o tratamento de sinais do sistema operacional (como SIGTERM e SIGINT) e ajustou o fluxo de controle de threads/processos no inicializador da aplicação, resolvendo o comportamento de bloqueio ou encerramento inadequado em ambientes Unix-like. Com essa correção, os containers e serviços em produção passam a responder de forma previsível e limpa às ordens de encerramento dos orquestradores (como Docker e Kubernetes), evitando interrupções abruptas de requisições ativas e prevenindo travamentos no desligamento (`csctracker_py_core/starter.py`).
+  * *Commit: `40495ad` | Autor: @krlsedu*
 
 ## 🔧 Chore
 *(Nenhuma alteração desta categoria nesta versão)*

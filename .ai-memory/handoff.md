@@ -2,7 +2,7 @@
 project: CscTrackerPyCore
 kind: handoff
 tier: working
-updated_at: 2026-11-21
+updated_at: 2026-11-24
 ---
 
 # 🤝 Handoff Ativo — `CscTrackerPyCore`
@@ -10,7 +10,9 @@ updated_at: 2026-11-21
 > **Escopo do Projeto:** Biblioteca Python base (`csctracker-py-core` no PyPI) compartilhada pelos microsserviços Flask do ecossistema (Starter, Waitress WSGI, GracefulShutdown, Interceptor, Logging JSON, Prometheus, Swagger e HttpRepository).
 
 ## 1. Onde Paramos / Contexto Atual (`WIP`)
-- **[2026-11-21] Implementação da ID 94 (`Por Publicar`, `17/17` testes offline OK e `python -m build` OK em Python `3.15.2`):**
+- **[2026-11-24] Implementação da Task #109 (`Por Publicar` — 6/6 testes novos OK em `tests/test_request_info.py`):**
+  - Adicionado `RequestInfo.get_user_email(auth_url=None, cache_ttl_seconds=300)` e `clear_user_email_cache()` em `csctracker_py_core/utils/request_info.py`, extraindo o token `Bearer` de `Authorization`, consultando `POST {AUTH_URL}/oauth/check_token` (`AUTH_CLIENT_ID`/`AUTH_CLIENT_SECRET`, padrão `OAUTH`/`OAUTH`, `timeout=5`) e cacheando em RAM por SHA-256 (TTL 300s, thread-safe, sem armazenar/logar token bruto).
+- **[2026-11-21] Implementação da ID 94 (`v26.47.003` / `26.47.3`, `Em Homologação`):**
   - Atualizado `requirements.txt` com versões compatíveis com Python `3.15` (`csctracker-queue-scheduler>=26.47.1`, `flask-swagger-init>=26.47.2`, `flask>=3.1,<4`, `python-json-logger>=3.0,<5`, `python-dotenv>=1.0,<2`, `requests>=2.32,<3`, `beautifulsoup4>=4.12,<5`, `flask-cors>=6.0,<7`, `prometheus-flask-exporter>=0.23.2,<1`, `pytz>=2026.1`, `waitress>=3.0.0,<4`).
   - Atualizados `setup.py` (`python_requires=">=3.11"`, classifiers `3.11`–`3.15`), `setup.cfg` (`description_file = README.md`), `MANIFEST.in`, `.github/workflows/build.yml` (Python `3.15` + `unittest` + `python -m build`) e `README.md` (`Python 3.11+` / `python:3.15-slim`).
   - Corrigidos `configs.py` (`from pythonjsonlogger.json import JsonFormatter`) e `http_repository.py` (`soup.find_all(string=...)`).

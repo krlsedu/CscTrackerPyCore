@@ -2,10 +2,14 @@
 project: CscTrackerPyCore
 kind: changelog
 tier: episodic
-updated_at: 2026-11-21
+updated_at: 2026-11-24
 ---
 
 # 📜 Changelog de Sessões — `CscTrackerPyCore`
+
+## 2026-11-24 — Task #109: Resolução de E-mail via Token Bearer em `RequestInfo`
+- Adicionado `RequestInfo.get_user_email()` em `csctracker_py_core/utils/request_info.py` com consulta a `/oauth/check_token` e cache thread-safe em RAM por SHA-256 (TTL 5 min).
+- Adicionados testes unitários offline em `tests/test_request_info.py` (`6/6` OK).
 
 ## 2026-11-21 — ID 94: Python 3.15, Atualização de Dependências e Drain Seguro do Waitress
 - Atualizadas dependências para Python `>=3.11` / `3.15` (`csctracker-queue-scheduler>=26.47.1`, `flask-swagger-init>=26.47.2`, `flask>=3.1,<4`, `python-json-logger>=3.0,<5`, `flask-cors>=6.0,<7`, `prometheus-flask-exporter>=0.23.2,<1`, `beautifulsoup4>=4.12,<5`, `pytz>=2026.1`), `setup.cfg`, `MANIFEST.in` e `.github/workflows/build.yml`.

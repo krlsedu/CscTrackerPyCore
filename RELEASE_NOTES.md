@@ -1,13 +1,13 @@
-Release Notes - v26.47.003
+Release Notes - v26.48.001
 
-Abaixo estão as notas de atualização para a versão v26.47.003. Esta versão tem como foco principal aprimorar a resiliência operacional da aplicação por meio da correção do mecanismo de desligamento gracioso (graceful shutdown) do servidor Waitress em ambientes Linux. As modificações garantem o tratamento adequado de sinais de encerramento do sistema operacional, prevenindo processos zumbis ou paradas forçadas durante o ciclo de vida dos containers e serviços.
+Abaixo estão as notas de atualização para a versão v26.48.001. Esta versão introduz a função utilitária `get_user_email` no módulo de extração de informações de requisições (`request_info`), permitindo a recuperação consistente e padronizada do e-mail do usuário autenticado no contexto da aplicação. A implementação conta com cobertura abrangente de testes unitários automatizados para validar diferentes cenários de payload e cabeçalhos, além da devida documentação de sessão interna.
 
 ## 🚀 Features
-*(Nenhuma alteração desta categoria nesta versão)*
+* **Request Info (Core / Auth):** Implementação da função `get_user_email` para viabilizar a extração direta, padronizada e segura do endereço de e-mail do usuário a partir dos dados e metadados contextuais da requisição (`request_info.py`). Essa funcionalidade supre a necessidade de obter a identidade do solicitante de forma centralizada nos microsserviços e bibliotecas dependentes, garantindo conformidade com o fluxo de autenticação e facilitando trilhas de auditoria, enriquecimento de logs operacionais e regras de negócio baseadas no operador (`csctracker_py_core/utils/request_info.py`).
+  * *Commit: `0366bfe` | Autor: @krlsedu*
 
 ## 🐛 Fixes
-* **Servidor WSGI / Ciclo de Vida:** Correção no gerenciamento do ciclo de vida e encerramento (shutdown) do servidor WSGI Waitress em plataformas Linux. A implementação aprimorou o tratamento de sinais do sistema operacional (como SIGTERM e SIGINT) e ajustou o fluxo de controle de threads/processos no inicializador da aplicação, resolvendo o comportamento de bloqueio ou encerramento inadequado em ambientes Unix-like. Com essa correção, os containers e serviços em produção passam a responder de forma previsível e limpa às ordens de encerramento dos orquestradores (como Docker e Kubernetes), evitando interrupções abruptas de requisições ativas e prevenindo travamentos no desligamento (`csctracker_py_core/starter.py`).
-  * *Commit: `40495ad` | Autor: @krlsedu*
+*(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🔧 Chore
 *(Nenhuma alteração desta categoria nesta versão)*

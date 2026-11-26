@@ -7,6 +7,10 @@ updated_at: 2026-11-26
 
 # 📜 Changelog de Sessões — `CscTrackerPyCore`
 
+## 2026-11-26 — Task #125 (Hotfix): `CaseInsensitiveHeaderDict` em `get_headers()` e Lookup `userName` no `RemoteRepository`
+- Adicionada a classe `CaseInsensitiveHeaderDict(dict)` em `csctracker_py_core/utils/request_info.py` como retorno de `RequestInfo.get_headers()` (com delegação única em `HttpRepository.get_headers()`), evitando regressão quando o WSGI normaliza `userName` para `Username`.
+- Ajustada `RemoteRepository.get_user()` para ler `userName` de forma *case-insensitive* e adicionados testes offline em `tests/test_request_info.py` e `tests/test_remote_repository.py` (`32/32` passando em Python `3.15.2`).
+
 ## 2026-11-26 — Task #125: Compatibilidade Waitress para `GET` com `Content-Length` e Sanitização de Headers
 - Adicionados `_LegacyCompatibleHTTPRequestParser`, `_LegacyCompatibleHTTPChannel` e `Starter._configure_waitress_legacy_compat` em `csctracker_py_core/starter.py` para evitar trava de `600s` no Waitress quando clientes legados enviam `GET`/`HEAD` com `Content-Length > 0`.
 - Corrigidos `RequestInfo.get_headers()` e `HttpRepository.get_headers()` para retornar `headers_` filtrado (excluindo `content-length`, `host`, `transfer-encoding`, `connection`) e adicionada sanitização `_sanitize_headers()` no `RemoteRepository`.

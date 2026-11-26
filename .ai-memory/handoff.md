@@ -10,10 +10,10 @@ updated_at: 2026-11-26
 > **Escopo do Projeto:** Biblioteca Python base (`csctracker-py-core` no PyPI) compartilhada pelos microsserviços Flask do ecossistema (Starter, Waitress WSGI, GracefulShutdown, Interceptor, Logging JSON, Prometheus, Swagger e HttpRepository).
 
 ## 1. Onde Paramos / Contexto Atual (`WIP`)
-- **[2026-11-26] Implementação da Task #125 (`Por Publicar` — `31/31` testes OK em Python `3.15.2`):**
+- **[2026-11-26] Implementação da Task #125 (`Por Publicar` — hotfix `v26.48.004` / `26.48.4`, `32/32` testes OK em Python `3.15.2`):**
   - Configurada compatibilidade no `Starter.start()` (`_configure_waitress_legacy_compat`, `_LegacyCompatibleHTTPRequestParser`, `_LegacyCompatibleHTTPChannel`) para ignorar `Content-Length > 0` em requisições `GET`/`HEAD` sem corpo enviadas por clientes legados (evitando bloqueio de `600s` no `FixedStreamReceiver` do Waitress).
-  - Corrigido retorno de `RequestInfo.get_headers()` / `HttpRepository.get_headers()` (antes retornavam `request.headers` bruto em vez do dicionário filtrado `headers_`) e removidos cabeçalhos hop-by-hop (`content-length`, `host`, `transfer-encoding`, `connection`), além de `_sanitize_headers()` nos 6 métodos HTTP de `RemoteRepository`.
-  - Adicionados testes offline de regressão em `tests/test_starter_wsgi.py`, `tests/test_request_info.py` e `tests/test_remote_repository.py` (`31/31` testes OK em Python `3.15.2`).
+  - Adicionada `CaseInsensitiveHeaderDict(dict)` em `RequestInfo.get_headers()` (com delegação de `HttpRepository.get_headers()`), preservando lookup/mutação *case-insensitive* (`Username` ➔ `headers.get('userName')`), removidos cabeçalhos hop-by-hop (`content-length`, `host`, `transfer-encoding`, `connection`), adicionada `_sanitize_headers()` nos 6 métodos HTTP de `RemoteRepository` e corrigida leitura *case-insensitive* em `RemoteRepository.get_user()`.
+  - Adicionados testes offline de regressão em `tests/test_starter_wsgi.py`, `tests/test_request_info.py` e `tests/test_remote_repository.py` (`32/32` testes OK em Python `3.15.2`).
 - **[2026-11-26] Implementação da Task #121 (`Em Homologação` — `v26.48.002` / `26.48.2`):**
   - Configurada `requests.Session()` única no `RemoteRepository` (`csctracker_py_core/repository/remote_repository.py`) com `HTTPAdapter(pool_connections=10, pool_maxsize=32)` configurável via `REMOTE_REPOSITORY_POOL_CONNECTIONS` / `REMOTE_REPOSITORY_POOL_MAXSIZE`.
   - Aplicado `timeout=600` (10 min) em todos os métodos (`insert`, `update`, `delete`, `get_object`, `get_objects`, `execute_select`) com override seguro via `REMOTE_REPOSITORY_TIMEOUT` (fallback para `600` em string vazia, inválida ou `<= 0`).
@@ -29,7 +29,7 @@ updated_at: 2026-11-26
 
 ## 3. Estado dos Arquivos / Branch / Build
 - **Fonte Primária:** GitHub (`master`, com espelho `.zip` em `projects/repositorys/CscTrackerPyCore/`).
-- **Testes offline:** `python -B -m unittest discover -s tests -v` (`31/31` passando em Python `3.15.2`).
+- **Testes offline:** `python -B -m unittest discover -s tests -v` (`32/32` passando em Python `3.15.2`).
 
 ## 4. Próximos Passos / Pendências Abertas
-- Publicar nova release `v26.48.003` (`26.48.3`, Tasks #121 + #125) de `csctracker-py-core` no PyPI e atualizar `csctracker-py-core==26.48.3` no `CscTrackerRepository/requirements.txt` para destravar as Tasks #93, #120, #123 e #124.
+- Publicar nova release `v26.48.004` (`26.48.4`, hotfix de *case-sensitivity* da Task #125) de `csctracker-py-core` no PyPI e atualizar `csctracker-py-core==26.48.4` no `CscTrackerRepository/requirements.txt` para republicar as Tasks #93, #120, #123 e #124.

@@ -1,3 +1,4 @@
+import json
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -5,7 +6,7 @@ from flask import Flask
 
 from csctracker_py_core.repository.http_repository import HttpRepository
 from csctracker_py_core.repository.remote_repository import RemoteRepository
-from csctracker_py_core.utils.request_info import RequestInfo
+from csctracker_py_core.utils.request_info import CaseInsensitiveHeaderDict, RequestInfo
 
 
 class TestRequestInfoGetUserEmail(unittest.TestCase):
@@ -109,7 +110,7 @@ class TestRequestInfoGetUserEmail(unittest.TestCase):
         ):
             self.assertIsNone(RequestInfo.get_user_email())
 
-    def test_get_headers_strips_framing_headers_and_returns_plain_dict(self):
+    def test_get_headers_strips_framing_headers_and_is_case_insensitive_dict(self):
         http_repo = HttpRepository(RemoteRepository())
         try:
             with self.app.test_request_context(
@@ -130,15 +131,31 @@ class TestRequestInfoGetUserEmail(unittest.TestCase):
                 hr_headers = http_repo.get_headers()
 
             for h in (ri_headers, hr_headers):
-                self.assertIs(type(h), dict)
+                self.assertIsInstance(h, dict)
+                self.assertIsInstance(h, CaseInsensitiveHeaderDict)
                 lower_keys = {k.lower() for k in h.keys()}
                 self.assertNotIn("content-length", lower_keys)
                 self.assertNotIn("host", lower_keys)
                 self.assertNotIn("transfer-encoding", lower_keys)
                 self.assertNotIn("connection", lower_keys)
-                self.assertEqual(h.get("Authorization"), "Bearer tok-abc")
-                self.assertEqual(h.get("Username") or h.get("userName"), "u@csc")
-                self.assertIn("x-correlation-id", lower_keys)
+                self.assertEqual(h.get("userName"), "u@csc")
+                self.assertEqual(h.get("USERNAME"), "u@csc")
+                self.assertEqual(h["userName"], "u@csc")
+                self.assertIn("userName", h)
+                self.assertEqual(h.get("authorization"), "Bearer tok-abc")
+                self.assertIsNotNone(h.get("X-Correlation-Id"))
+                parsed = json.loads(json.dumps(h))
+                self.assertEqual(len(parsed), len(h))
+
+                copied = h.copy()
+                self.assertIsInstance(copied, CaseInsensitiveHeaderDict)
+                copied["USERNAME"] = "other@csc"
+                self.assertEqual(copied["userName"], "other@csc")
+                self.assertEqual(
+                    sum(1 for k in copied.keys() if k.lower() == "username"), 1
+                )
+                self.assertEqual(copied.pop("userName"), "other@csc")
+                self.assertNotIn("USERNAME", copied)
         finally:
             http_repo.remote_repository.close()
 

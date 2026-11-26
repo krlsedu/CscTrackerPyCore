@@ -15,10 +15,6 @@ headers_sti = {
     "User-Agent": "PostmanRuntime/7.26.8",
 }
 
-_HOP_BY_HOP_OR_FRAMING_HEADERS = frozenset(
-    {"content-length", "host", "transfer-encoding", "connection"}
-)
-
 
 class HttpRepository:
     def __init__(self, remote_repository: RemoteRepository):
@@ -234,18 +230,7 @@ class HttpRepository:
         return request.args
 
     def get_headers(self):
-        headers = request.headers
-        headers_ = {}
-        has_correlation_id = False
-        for key in headers.keys():
-            if key.lower() in _HOP_BY_HOP_OR_FRAMING_HEADERS:
-                continue
-            if key.lower() == "x-correlation-id":
-                has_correlation_id = True
-            headers_[key] = headers.get(key)
-        if not has_correlation_id:
-            headers_["x-correlation-id"] = RequestInfo.get_request_id(True)
-        return headers_
+        return RequestInfo.get_headers()
 
     def get_request(self):
         return request

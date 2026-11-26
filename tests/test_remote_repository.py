@@ -162,6 +162,19 @@ class TestRemoteRepository(unittest.TestCase):
         finally:
             repo.close()
 
+    def test_get_user_reads_username_case_insensitively_from_plain_dict(self):
+        repo = RemoteRepository()
+        try:
+            ok_resp = self._ok_response({"id": 7, "email": "u@csc"})
+            with patch.object(repo.session, "get", return_value=ok_resp) as mock_get:
+                user = repo.get_user({"Username": "u@csc", "Authorization": "Bearer tok"})
+
+            self.assertEqual(user["id"], 7)
+            self.assertTrue(mock_get.call_args.args[0].endswith("/single/users"))
+            self.assertEqual(mock_get.call_args.kwargs["params"], {"email": "u@csc"})
+        finally:
+            repo.close()
+
 
 if __name__ == "__main__":
     unittest.main()

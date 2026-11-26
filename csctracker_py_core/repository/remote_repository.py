@@ -167,7 +167,16 @@ class RemoteRepository:
         return data
 
     def get_user(self, headers=None):
-        user_name = headers.get("userName")
+        user_name = None
+        if headers:
+            user_name = next(
+                (
+                    v
+                    for k, v in headers.items()
+                    if isinstance(k, str) and k.lower() == "username"
+                ),
+                None,
+            )
         try:
             user = self.get_object("users", data={"email": user_name}, headers=headers)
             return user

@@ -18,6 +18,92 @@ _HOP_BY_HOP_OR_FRAMING_HEADERS = frozenset(
 )
 
 
+class CaseInsensitiveHeaderDict(dict):
+    """Subclasse de dict com lookup case-insensitive para headers HTTP."""
+
+    def __init__(self, initial=None, **kwargs):
+        super().__init__()
+        self._lower_to_key: dict[str, str] = {}
+        if initial is not None:
+            self.update(initial)
+        if kwargs:
+            self.update(kwargs)
+
+    def _resolve_key(self, key):
+        if isinstance(key, str):
+            return self._lower_to_key.get(key.lower(), key)
+        return key
+
+    def __setitem__(self, key, value):
+        if isinstance(key, str):
+            lower = key.lower()
+            existing = self._lower_to_key.get(lower)
+            if existing is not None and existing != key:
+                super().__delitem__(existing)
+            self._lower_to_key[lower] = key
+        super().__setitem__(key, value)
+
+    def __getitem__(self, key):
+        return super().__getitem__(self._resolve_key(key))
+
+    def __delitem__(self, key):
+        resolved = self._resolve_key(key)
+        super().__delitem__(resolved)
+        if isinstance(resolved, str):
+            self._lower_to_key.pop(resolved.lower(), None)
+
+    def __contains__(self, key):
+        if isinstance(key, str):
+            return key.lower() in self._lower_to_key
+        return super().__contains__(key)
+
+    def get(self, key, default=None):
+        return super().get(self._resolve_key(key), default)
+
+    def pop(self, key, *args):
+        if len(args) > 1:
+            raise TypeError(f"pop expected at most 2 arguments, got {1 + len(args)}")
+        resolved = self._resolve_key(key)
+        if super().__contains__(resolved):
+            val = super().pop(resolved)
+            if isinstance(resolved, str):
+                self._lower_to_key.pop(resolved.lower(), None)
+            return val
+        if args:
+            return args[0]
+        raise KeyError(key)
+
+    def setdefault(self, key, default=None):
+        resolved = self._resolve_key(key)
+        if super().__contains__(resolved):
+            return super().__getitem__(resolved)
+        self[key] = default
+        return default
+
+    def update(self, other=(), **kwargs):
+        if hasattr(other, "items"):
+            for k, v in other.items():
+                self[k] = v
+        else:
+            for k, v in other:
+                self[k] = v
+        for k, v in kwargs.items():
+            self[k] = v
+
+    def clear(self):
+        self._lower_to_key.clear()
+        super().clear()
+
+    def copy(self):
+        return CaseInsensitiveHeaderDict(self)
+
+    def popitem(self):
+        key, val = super().popitem()
+        if isinstance(key, str):
+            self._lower_to_key.pop(key.lower(), None)
+        return key, val
+
+
 class RequestInfo:
     _user_email_cache: dict[str, tuple[Optional[str], float]] = {}
     _user_email_cache_lock = threading.Lock()
@@ -155,7 +241,7 @@ class RequestInfo:
     @staticmethod
     def get_headers():
         headers = request.headers
-        headers_ = {}
+        headers_ = CaseInsensitiveHeaderDict()
         has_correlation_id = False
         for key in headers.keys():
             if key.lower() in _HOP_BY_HOP_OR_FRAMING_HEADERS:

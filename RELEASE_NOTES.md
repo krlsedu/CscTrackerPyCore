@@ -1,13 +1,13 @@
-Release Notes - v26.48.002
+Release Notes - v26.48.003
 
-Abaixo estão as notas de atualização para a versão v26.48.002. Esta versão foca na otimização de infraestrutura de rede e comunicação remota da biblioteca central com a introdução de pool de conexões HTTP e elevação do timeout padrão para 600 segundos no repositório remoto. O objetivo principal foi mitigar gargalos em requisições de longa duração e otimizar o reaproveitamento de sockets, acompanhado de novos testes automatizados e atualizações na documentação de agentes.
+Abaixo estão as notas de atualização para a versão v26.48.003. Esta versão tem como objetivo principal corrigir o tratamento e encaminhamento de requisições HTTP do tipo GET que continham o cabeçalho `Content-Length`, prevenindo falhas de integração e rejeições de protocolo em chamadas downstream e camadas WSGI. A entrega refatora os repositórios remotos, a extração de metadados das requisições e a inicialização da aplicação, acompanhada por uma robusta suíte de testes unitários que valida a sanitização dos cabeçalhos.
 
 ## 🚀 Features
 *(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🐛 Fixes
-*(Nenhuma alteração desta categoria nesta versão)*
+* **HTTP / WSGI Handling:** Correção do tratamento indevido do cabeçalho `Content-Length` em requisições HTTP GET, que causava anomalias no parse de payloads inexistentes e falhas de protocolo em clientes ou servidores downstream. A implementação higieniza os headers na camada de abstração de requisição (`request_info.py`), nos repositórios HTTP/remotos (`http_repository.py` e `remote_repository.py`) e na camada de inicialização WSGI (`starter.py`), garantindo que requisições GET sem corpo não propaguem comprimento de conteúdo inválido e evitando falhas de comunicação entre microsserviços (`csctracker_py_core/repository/remote_repository.py`).
+  * *Commit: `25b1248` | Autor: @krlsedu*
 
 ## 🔧 Chore
-* **Rede / Repositório Remoto:** Implementação de gerenciamento otimizado de conexões através de pool de conexões HTTP e redefinição do tempo limite padrão de resposta para 600 segundos (`csctracker_py_core/repository/remote_repository.py`), suportado pela expansão de enums de configuração e orquestração de ciclo de vida (`csctracker_py_core/starter.py`, `csctracker_py_core/models/emuns/config.py`). A alteração foi motivada pela necessidade de suportar chamadas externas de longa duração com maior estabilidade e reduzir o overhead de handshake em ambientes de alta concorrência; foram adicionados testes unitários dedicados à validação do repositório remoto e de encerramento gracioso (`tests/test_remote_repository.py`, `tests/test_graceful_shutdown.py`), além de atualizações nas documentações de contexto e agentes (`.agents/skills/csctracker/SKILL.md`, `.ai-memory/changelog_sessoes.md`, `.ai-memory/handoff.md`).
-  * *Commit: `7ecea18` | Autor: @krlsedu*
+*(Nenhuma alteração desta categoria nesta versão)*

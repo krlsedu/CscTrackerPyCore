@@ -5,6 +5,8 @@ import threading
 import time
 
 import waitress
+from waitress import channel as waitress_channel
+from waitress import parser as waitress_parser
 from waitress import server as waitress_server
 from waitress import wasyncore
 from csctracker_queue_scheduler.services.scheduler_service import SchedulerService
@@ -20,6 +22,24 @@ from csctracker_py_core.utils.configs import Configs
 from csctracker_py_core.utils.graceful_shutdown import GracefulShutdown
 from csctracker_py_core.utils.interceptor import Interceptor
 from csctracker_py_core.utils.version import Version
+
+
+class _LegacyCompatibleHTTPRequestParser(waitress_parser.HTTPRequestParser):
+    def parse_header(self, header_plus):
+        super().parse_header(header_plus)
+        if (
+            self.command in ("GET", "HEAD")
+            and not self.chunked
+            and self.content_length > 0
+        ):
+            self.content_length = 0
+            self.body_rcv = None
+            self.headers["CONTENT_LENGTH"] = "0"
+            self.connection_close = True
+
+
+class _LegacyCompatibleHTTPChannel(waitress_channel.HTTPChannel):
+    parser_class = _LegacyCompatibleHTTPRequestParser
 
 
 class Starter:
@@ -197,6 +217,18 @@ class Starter:
         graceful_shutdown.set_server_close_hook(close_listener)
         graceful_shutdown.set_server_post_drain_hook(finalize_server)
 
+    @staticmethod
+    def _configure_waitress_legacy_compat(server):
+        server_map = getattr(server, "_map", None)
+        if server_map is None:
+            server_map = getattr(server, "map", None)
+        if isinstance(server_map, dict):
+            for obj in list(server_map.values()):
+                if isinstance(obj, waitress_server.BaseWSGIServer):
+                    obj.channel_class = _LegacyCompatibleHTTPChannel
+        if isinstance(server, waitress_server.BaseWSGIServer):
+            server.channel_class = _LegacyCompatibleHTTPChannel
+
     def register_shutdown_hook(self, callback):
         self.graceful_shutdown.register_shutdown_hook(callback)
 
@@ -244,5 +276,6 @@ class Starter:
             threads=threads,
             channel_timeout=channel_timeout,
         )
+        self._configure_waitress_legacy_compat(server)
         self._register_waitress_shutdown_hooks(self.graceful_shutdown, server)
         server.run()

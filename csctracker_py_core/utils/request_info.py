@@ -13,6 +13,10 @@ from csctracker_py_core.utils.version import Version
 
 logger = logging.getLogger(__name__)
 
+_HOP_BY_HOP_OR_FRAMING_HEADERS = frozenset(
+    {"content-length", "host", "transfer-encoding", "connection"}
+)
+
 
 class RequestInfo:
     _user_email_cache: dict[str, tuple[Optional[str], float]] = {}
@@ -152,8 +156,13 @@ class RequestInfo:
     def get_headers():
         headers = request.headers
         headers_ = {}
+        has_correlation_id = False
         for key in headers.keys():
+            if key.lower() in _HOP_BY_HOP_OR_FRAMING_HEADERS:
+                continue
+            if key.lower() == "x-correlation-id":
+                has_correlation_id = True
             headers_[key] = headers.get(key)
-        if "x-correlation-id" not in headers_:
+        if not has_correlation_id:
             headers_["x-correlation-id"] = RequestInfo.get_request_id(True)
-        return headers
+        return headers_

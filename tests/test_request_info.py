@@ -3,6 +3,8 @@ from unittest.mock import MagicMock, patch
 
 from flask import Flask
 
+from csctracker_py_core.repository.http_repository import HttpRepository
+from csctracker_py_core.repository.remote_repository import RemoteRepository
 from csctracker_py_core.utils.request_info import RequestInfo
 
 
@@ -106,6 +108,39 @@ class TestRequestInfoGetUserEmail(unittest.TestCase):
             "/", headers={"Authorization": "Bearer tok-err"}
         ):
             self.assertIsNone(RequestInfo.get_user_email())
+
+    def test_get_headers_strips_framing_headers_and_returns_plain_dict(self):
+        http_repo = HttpRepository(RemoteRepository())
+        try:
+            with self.app.test_request_context(
+                "/heartbeat",
+                method="POST",
+                data='{"a": 1}',
+                content_type="application/json",
+                headers={
+                    "Host": "usage-info-ai:5000",
+                    "Content-Length": "8",
+                    "Transfer-Encoding": "chunked",
+                    "Connection": "keep-alive",
+                    "Authorization": "Bearer tok-abc",
+                    "userName": "u@csc",
+                },
+            ):
+                ri_headers = RequestInfo.get_headers()
+                hr_headers = http_repo.get_headers()
+
+            for h in (ri_headers, hr_headers):
+                self.assertIs(type(h), dict)
+                lower_keys = {k.lower() for k in h.keys()}
+                self.assertNotIn("content-length", lower_keys)
+                self.assertNotIn("host", lower_keys)
+                self.assertNotIn("transfer-encoding", lower_keys)
+                self.assertNotIn("connection", lower_keys)
+                self.assertEqual(h.get("Authorization"), "Bearer tok-abc")
+                self.assertEqual(h.get("Username") or h.get("userName"), "u@csc")
+                self.assertIn("x-correlation-id", lower_keys)
+        finally:
+            http_repo.remote_repository.close()
 
 
 if __name__ == "__main__":

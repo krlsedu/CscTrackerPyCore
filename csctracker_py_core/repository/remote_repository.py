@@ -12,6 +12,9 @@ class RemoteRepository:
     DEFAULT_TIMEOUT = 600
     DEFAULT_POOL_CONNECTIONS = 10
     DEFAULT_POOL_MAXSIZE = 32
+    _HOP_BY_HOP_OR_FRAMING_HEADERS = frozenset(
+        {"content-length", "host", "transfer-encoding", "connection"}
+    )
 
     def __init__(self):
         self.logger = logging.getLogger()
@@ -85,6 +88,20 @@ class RemoteRepository:
                 return default
         return default
 
+    @classmethod
+    def _sanitize_headers(cls, headers):
+        if headers is None:
+            return None
+        try:
+            items = headers.items()
+        except Exception:
+            return None
+        return {
+            k: v
+            for k, v in items
+            if k and str(k).lower() not in cls._HOP_BY_HOP_OR_FRAMING_HEADERS
+        }
+
     def close(self):
         if self.session is not None:
             try:
@@ -93,6 +110,7 @@ class RemoteRepository:
                 pass
 
     def insert(self, table, data, headers=None):
+        headers = self._sanitize_headers(headers)
         try:
             response = self.session.post(
                 self.url_repository + table,
@@ -108,6 +126,7 @@ class RemoteRepository:
 
     def update(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
+        headers = self._sanitize_headers(headers)
         try:
             response = self.session.post(
                 self.url_repository + table,
@@ -127,6 +146,7 @@ class RemoteRepository:
 
     def delete(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
+        headers = self._sanitize_headers(headers)
         try:
             response = self.session.post(
                 self.url_repository + "delete/" + table,
@@ -156,6 +176,7 @@ class RemoteRepository:
 
     def get_object(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
+        headers = self._sanitize_headers(headers)
         try:
             response = self.session.get(
                 self.url_repository + "single/" + table,
@@ -174,6 +195,7 @@ class RemoteRepository:
 
     def get_objects(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
+        headers = self._sanitize_headers(headers)
         try:
             response = self.session.get(
                 self.url_repository + table,
@@ -189,6 +211,7 @@ class RemoteRepository:
 
     def execute_select(self, select, headers=None):
         command = {"command": select}
+        headers = self._sanitize_headers(headers)
         try:
             response = self.session.post(
                 self.url_repository + "command/select",

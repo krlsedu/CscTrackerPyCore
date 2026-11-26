@@ -2,7 +2,7 @@
 project: CscTrackerPyCore
 kind: gotchas
 tier: semantic
-updated_at: 2026-11-22
+updated_at: 2026-11-26
 ---
 
 # ⚠️ Armadilhas Conhecidas (`Gotchas`) — `CscTrackerPyCore`
@@ -13,3 +13,4 @@ updated_at: 2026-11-22
 - **`BeautifulSoup.find_all(text=...)` depreciado:** Usar sempre `string=` no `beautifulsoup4>=4.12`.
 - **`PROFILE` tem default `"dev"` no `Starter`:** Composes de produção nem sempre definem `PROFILE=prod`, fazendo `os.getenv("PROFILE", "dev")` retornar `"dev"` em produção. Nunca usar `PROFILE == "dev"` para desligar recursos de produção — usar `DEBUG=1` (`Configs.is_debug()`).
 - **ENVs numéricas vazias em Compose:** `Configs.get_env_variable` retorna `""` (string vazia) se a variável estiver definida vazia no ambiente. Sempre converter inteiros de configuração com fallback seguro (`Starter._get_int_env`).
+- **Clientes legados enviando `GET`/`HEAD` com `Content-Length > 0` travam o Waitress por `channel_timeout` (`600s`):** Clientes em versões antigas do `csctracker-py-core` chamavam `RequestInfo.get_headers()` / `HttpRepository.get_headers()` dentro de rotas `POST` (retornando `request.headers` bruto) e repassavam `Content-Length > 0` em chamadas `requests.get()` sem corpo. Enquanto o Werkzeug ignorava o header, o `HTTPRequestParser` do Waitress aloca `FixedStreamReceiver(content_length)` e bloqueia aguardando bytes inexistentes até `channel_timeout`. **Mitigação (Task #125):** sanitizar `content-length`, `host`, `transfer-encoding` e `connection` em `RequestInfo.get_headers()`, `HttpRepository.get_headers()` e `RemoteRepository`, e aplicar `_LegacyCompatibleHTTPRequestParser` / `_LegacyCompatibleHTTPChannel` no `Starter.start()` para zerar `Content-Length > 0` em `GET`/`HEAD` (e `DELETE` sem body/chunked).

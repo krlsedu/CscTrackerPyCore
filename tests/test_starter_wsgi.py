@@ -10,6 +10,7 @@ import warnings
 from unittest.mock import MagicMock, patch
 
 import waitress
+import requests
 from bs4 import BeautifulSoup
 from flask import Flask
 
@@ -270,6 +271,40 @@ class TestStarterWsgi(unittest.TestCase):
         self.assertEqual(shutdown.active_requests, 0)
         self.assertFalse(drain_thread.is_alive())
         self.assertFalse(server_thread.is_alive())
+
+    def test_waitress_handles_legacy_get_with_content_length_without_hanging(self):
+        app = Flask(__name__)
+
+        @app.route("/ping")
+        def ping():
+            return {"status": "ok"}
+
+        server = waitress.create_server(
+            app, host="127.0.0.1", port=0, threads=4, channel_timeout=5
+        )
+        Starter._configure_waitress_legacy_compat(server)
+        port = getattr(server, "effective_port", None) or server.getsockname()[1]
+
+        server_thread = threading.Thread(target=server.run, daemon=True)
+        server_thread.start()
+        try:
+            t0 = time.monotonic()
+            resp_legacy = requests.get(
+                f"http://127.0.0.1:{port}/ping",
+                headers={"Content-Length": "450"},
+                timeout=2,
+            )
+            elapsed = time.monotonic() - t0
+            self.assertEqual(resp_legacy.status_code, 200)
+            self.assertEqual(resp_legacy.json(), {"status": "ok"})
+            self.assertLess(elapsed, 1.5)
+
+            resp_clean = requests.get(f"http://127.0.0.1:{port}/ping", timeout=2)
+            self.assertEqual(resp_clean.status_code, 200)
+            self.assertEqual(resp_clean.json(), {"status": "ok"})
+        finally:
+            server.close()
+            server_thread.join(timeout=3)
 
 
 if __name__ == "__main__":

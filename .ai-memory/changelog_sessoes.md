@@ -7,6 +7,11 @@ updated_at: 2026-11-26
 
 # 📜 Changelog de Sessões — `CscTrackerPyCore`
 
+## 2026-11-26 — Task #125: Compatibilidade Waitress para `GET` com `Content-Length` e Sanitização de Headers
+- Adicionados `_LegacyCompatibleHTTPRequestParser`, `_LegacyCompatibleHTTPChannel` e `Starter._configure_waitress_legacy_compat` em `csctracker_py_core/starter.py` para evitar trava de `600s` no Waitress quando clientes legados enviam `GET`/`HEAD` com `Content-Length > 0`.
+- Corrigidos `RequestInfo.get_headers()` e `HttpRepository.get_headers()` para retornar `headers_` filtrado (excluindo `content-length`, `host`, `transfer-encoding`, `connection`) e adicionada sanitização `_sanitize_headers()` no `RemoteRepository`.
+- Adicionados testes offline em `tests/test_starter_wsgi.py`, `tests/test_request_info.py` e `tests/test_remote_repository.py` (`31/31` passando em Python `3.15.2`).
+
 ## 2026-11-26 — Task #121: Pool HTTP (`requests.Session`) e Timeout `600s` no `RemoteRepository`
 - Configurada `requests.Session()` persistente com `HTTPAdapter` (`pool_connections=10`, `pool_maxsize=32`) e `timeout=600` padrão em todos os métodos do `RemoteRepository`, com override via `REMOTE_REPOSITORY_TIMEOUT` (e parse seguro para strings vazias/inválidas).
 - Registrado `self.remote_repository.close` como hook no `GracefulShutdown` via `Starter.__init__()`.

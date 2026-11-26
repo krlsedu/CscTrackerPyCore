@@ -1,13 +1,13 @@
-Release Notes - v26.48.001
+Release Notes - v26.48.002
 
-Abaixo estão as notas de atualização para a versão v26.48.001. Esta versão introduz a função utilitária `get_user_email` no módulo de extração de informações de requisições (`request_info`), permitindo a recuperação consistente e padronizada do e-mail do usuário autenticado no contexto da aplicação. A implementação conta com cobertura abrangente de testes unitários automatizados para validar diferentes cenários de payload e cabeçalhos, além da devida documentação de sessão interna.
+Abaixo estão as notas de atualização para a versão v26.48.002. Esta versão foca na otimização de infraestrutura de rede e comunicação remota da biblioteca central com a introdução de pool de conexões HTTP e elevação do timeout padrão para 600 segundos no repositório remoto. O objetivo principal foi mitigar gargalos em requisições de longa duração e otimizar o reaproveitamento de sockets, acompanhado de novos testes automatizados e atualizações na documentação de agentes.
 
 ## 🚀 Features
-* **Request Info (Core / Auth):** Implementação da função `get_user_email` para viabilizar a extração direta, padronizada e segura do endereço de e-mail do usuário a partir dos dados e metadados contextuais da requisição (`request_info.py`). Essa funcionalidade supre a necessidade de obter a identidade do solicitante de forma centralizada nos microsserviços e bibliotecas dependentes, garantindo conformidade com o fluxo de autenticação e facilitando trilhas de auditoria, enriquecimento de logs operacionais e regras de negócio baseadas no operador (`csctracker_py_core/utils/request_info.py`).
-  * *Commit: `0366bfe` | Autor: @krlsedu*
+*(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🐛 Fixes
 *(Nenhuma alteração desta categoria nesta versão)*
 
 ## 🔧 Chore
-*(Nenhuma alteração desta categoria nesta versão)*
+* **Rede / Repositório Remoto:** Implementação de gerenciamento otimizado de conexões através de pool de conexões HTTP e redefinição do tempo limite padrão de resposta para 600 segundos (`csctracker_py_core/repository/remote_repository.py`), suportado pela expansão de enums de configuração e orquestração de ciclo de vida (`csctracker_py_core/starter.py`, `csctracker_py_core/models/emuns/config.py`). A alteração foi motivada pela necessidade de suportar chamadas externas de longa duração com maior estabilidade e reduzir o overhead de handshake em ambientes de alta concorrência; foram adicionados testes unitários dedicados à validação do repositório remoto e de encerramento gracioso (`tests/test_remote_repository.py`, `tests/test_graceful_shutdown.py`), além de atualizações nas documentações de contexto e agentes (`.agents/skills/csctracker/SKILL.md`, `.ai-memory/changelog_sessoes.md`, `.ai-memory/handoff.md`).
+  * *Commit: `7ecea18` | Autor: @krlsedu*

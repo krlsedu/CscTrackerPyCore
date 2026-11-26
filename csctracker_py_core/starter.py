@@ -42,6 +42,7 @@ class Starter:
         self.graceful_shutdown = GracefulShutdown.get_instance(timeout=shutdown_timeout)
         self.graceful_shutdown.register_signals()
         self.remote_repository = RemoteRepository()
+        self.graceful_shutdown.register_shutdown_hook(self.remote_repository.close)
         self.http_repository = HttpRepository(remote_repository=self.remote_repository)
         self.interceptor = Interceptor(
             self.app, self.http_repository, save_request=save_request, is_bff=is_bff,

@@ -2,7 +2,7 @@
 project: CscTrackerPyCore
 kind: handoff
 tier: working
-updated_at: 2026-11-24
+updated_at: 2026-11-26
 ---
 
 # 🤝 Handoff Ativo — `CscTrackerPyCore`
@@ -10,21 +10,22 @@ updated_at: 2026-11-24
 > **Escopo do Projeto:** Biblioteca Python base (`csctracker-py-core` no PyPI) compartilhada pelos microsserviços Flask do ecossistema (Starter, Waitress WSGI, GracefulShutdown, Interceptor, Logging JSON, Prometheus, Swagger e HttpRepository).
 
 ## 1. Onde Paramos / Contexto Atual (`WIP`)
-- **[2026-11-24] Implementação da Task #109 (`Por Publicar` — 6/6 testes novos OK em `tests/test_request_info.py`):**
-  - Adicionado `RequestInfo.get_user_email(auth_url=None, cache_ttl_seconds=300)` e `clear_user_email_cache()` em `csctracker_py_core/utils/request_info.py`, extraindo o token `Bearer` de `Authorization`, consultando `POST {AUTH_URL}/oauth/check_token` (`AUTH_CLIENT_ID`/`AUTH_CLIENT_SECRET`, padrão `OAUTH`/`OAUTH`, `timeout=5`) e cacheando em RAM por SHA-256 (TTL 300s, thread-safe, sem armazenar/logar token bruto).
+- **[2026-11-26] Implementação da Task #121 (`Por Publicar` — `28/28` testes OK em Python `3.15.2`):**
+  - Configurada `requests.Session()` única no `RemoteRepository` (`csctracker_py_core/repository/remote_repository.py`) com `HTTPAdapter(pool_connections=10, pool_maxsize=32)` configurável via `REMOTE_REPOSITORY_POOL_CONNECTIONS` / `REMOTE_REPOSITORY_POOL_MAXSIZE`.
+  - Aplicado `timeout=600` (10 min) em todos os métodos (`insert`, `update`, `delete`, `get_object`, `get_objects`, `execute_select`) com override seguro via `REMOTE_REPOSITORY_TIMEOUT` (fallback para `600` em string vazia, inválida ou `<= 0`).
+  - Adicionadas chaves em `csctracker_py_core/models/emuns/config.py`, método `RemoteRepository.close()` e registro automático do hook no `GracefulShutdown` em `Starter.__init__()`.
+  - Adicionada suíte offline em `tests/test_remote_repository.py` e atualizado `tests/test_graceful_shutdown.py` (`28/28` testes passando).
+- **[2026-11-24] Implementação da Task #109 (`Em Homologação` — `v26.48.001` / `26.48.1`):**
+  - Adicionado `RequestInfo.get_user_email(auth_url=None, cache_ttl_seconds=300)` e `clear_user_email_cache()` em `csctracker_py_core/utils/request_info.py`.
 - **[2026-11-21] Implementação da ID 94 (`v26.47.003` / `26.47.3`, `Em Homologação`):**
-  - Atualizado `requirements.txt` com versões compatíveis com Python `3.15` (`csctracker-queue-scheduler>=26.47.1`, `flask-swagger-init>=26.47.2`, `flask>=3.1,<4`, `python-json-logger>=3.0,<5`, `python-dotenv>=1.0,<2`, `requests>=2.32,<3`, `beautifulsoup4>=4.12,<5`, `flask-cors>=6.0,<7`, `prometheus-flask-exporter>=0.23.2,<1`, `pytz>=2026.1`, `waitress>=3.0.0,<4`).
-  - Atualizados `setup.py` (`python_requires=">=3.11"`, classifiers `3.11`–`3.15`), `setup.cfg` (`description_file = README.md`), `MANIFEST.in`, `.github/workflows/build.yml` (Python `3.15` + `unittest` + `python -m build`) e `README.md` (`Python 3.11+` / `python:3.15-slim`).
-  - Corrigidos `configs.py` (`from pythonjsonlogger.json import JsonFormatter`) e `http_repository.py` (`soup.find_all(string=...)`).
-  - Corrigido o drain seguro do Waitress (`starter.py`, `graceful_shutdown.py`, `interceptor.py`): `wasyncore.dispatcher.close(server)` no início, rejeição `503` + `Connection: close` no `Interceptor` com guarda `g._counted_request`, pós-drain com `task_dispatcher.shutdown(cancel_pending=False)` + flush de `total_outbufs_len` e fechamento final de canais e `server.trigger.close()`.
-  - Expandida suíte offline em `tests/test_starter_wsgi.py` (incluindo regressão real com Waitress em porta efêmera `0`).
+  - Suporte Python `>=3.11`/`3.15`, `python-json-logger` v4+, `MANIFEST.in`, `setup.cfg` e drain seguro em duas fases para o Waitress.
 
 ## 2. Tentativas Descartadas / O que Falhou (`Failed Approaches`)
 - Na **ID 90**, registrar `server.close` diretamente no `GracefulShutdown` fechava `server.trigger` antes do término das requisições ativas, causando `OSError` no `pull_trigger()` do Waitress durante drain de respostas em voo. Substituído pelo fechamento em duas fases (`close_listener` + `finalize_server`).
 
 ## 3. Estado dos Arquivos / Branch / Build
 - **Fonte Primária:** GitHub (`master`, com espelho `.zip` em `projects/repositorys/CscTrackerPyCore/`).
-- **Testes e Build offline:** `python -B -m unittest discover -s tests -v` (`17/17` passando) e `python -m build` OK em Python `3.15.2`.
+- **Testes offline:** `python -B -m unittest discover -s tests -v` (`28/28` passando em Python `3.15.2`).
 
 ## 4. Próximos Passos / Pendências Abertas
-- Publicar nova versão de `csctracker-py-core` (`v26.47.002` / `26.47.2`) no PyPI para desbloquear a **Etapa 3 (ID 97 — `CscTrackerAiCore`)** e a **Etapa 4 (ID 93 — `CscTrackerRepository`)**.
+- Publicar nova release de `csctracker-py-core` (Task #121) no PyPI e atualizar `csctracker-py-core==<nova_versao>` no `CscTrackerRepository/requirements.txt` (para concluir commit/push da Task #120).

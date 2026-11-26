@@ -1,15 +1,15 @@
 ---
 name: csctracker
-description: Execute ALWAYS whenever interacting with the CscTracker ecosystem (CscTrackerAndroid, CscTrackerVigilante, CscTrackerVigilanteCurador, CscTrackerNotificationAI, CscTrackerMqtt, CscTrackerBackend, CscTrackerRepository, CscTrackerAiCore, CscTrackerPyCore, CscTrackerIA, CscTrackerCicd, CscTrackerFront, CscTrackerWhatsConversation, CscTrackerFFExtension, and any other CscTracker repo) or when asked to analyze code, diagnose issues, or create patches/prompts for CscTracker projects. Enforces prior user approval before modifying governance/skills, canonical reading chain (SKILL.md -> README.md -> <Project>.md -> ideias/ -> ai-memory/projects/<Project>/), mandatory enforcement of project-specific [PINNED] rules in .ai-memory/decisions.md, token-frugal KISS execution, clean UI guidelines, pure Markdown/YAML/CSV storage with absolute prohibition of Google Docs/Sheets and in-place Drive updates, GitHub-first source resolution with Drive ZIP sync at Handoff, direct codebase modification followed by mutual review and PT-BR commit/push (CSCTRACKER-ID <=50 chars imperative subject), non-blocking git push, absolute fidelity over sanitization, 7-status Markdown/CSV backlog lifecycle, continuous ai-memory lifecycle, and repository auto-provisioning (.agents/, .ai-memory/, .junie/, .github/workflows/).
+description: Execute ALWAYS whenever interacting with the CscTracker ecosystem (CscTrackerAndroid, CscTrackerVigilante, CscTrackerVigilanteCurador, CscTrackerNotificationAI, CscTrackerMqtt, CscTrackerBackend, CscTrackerRepository, CscTrackerAiCore, CscTrackerPyCore, CscTrackerIA, CscTrackerCicd, CscTrackerFront, CscTrackerWhatsConversation, CscTrackerFFExtension, and any other CscTracker repo) or when asked to analyze code, diagnose issues, or create patches/prompts for CscTracker projects. Enforces prior user approval before modifying governance/skills, canonical reading chain (SKILL.md -> README.md -> <Project>.md -> tasks/ -> ai-memory/projects/<Project>/), mandatory enforcement of project-specific [PINNED] rules in .ai-memory/decisions.md, token-frugal KISS execution, clean UI guidelines, pure Markdown/YAML/CSV storage with absolute prohibition of Google Docs/Sheets and in-place Drive updates, GitHub-first source resolution with Drive ZIP sync at Handoff, direct codebase modification followed by mutual review and PT-BR commit/push (CSCTRACKER-ID <=50 chars imperative subject), non-blocking git push, absolute fidelity over sanitization, 7-status Markdown/CSV backlog lifecycle, continuous ai-memory lifecycle, and repository auto-provisioning (.agents/, .ai-memory/, .junie/, .github/workflows/).
 ---
 # CscTracker Governance and Execution Protocol
 
 ## Summary
-Protocolo mestre agnóstico e **Fonte Única da Verdade (SSOT)** da governança global do ecossistema **CscTracker**. Define: (1) aprovação prévia obrigatória antes de alterar a própria skill ou diretrizes; (2) cadeia de leitura e cumprimento compulsório das cláusulas pétreas `[PINNED]` específicas de cada repositório em `.ai-memory/decisions.md` e `AI_specs/<Projeto>.md`; (3) execução KISS com economia estrita de tokens; (4) fidelidade absoluta acima de sanitização; (5) UI limpa sem detalhes de infra; (6) fluxo Antigravity (alteração direta ➔ revisão conjunta ➔ commit PT-BR `CSCTRACKER-<ID>` <= 50 chars + push seguro na `master` via merge); (7) bloqueio de implementação sem Ideia vinculada e backlog de 7 status em `projects/ideias/`; (8) memória contínua `ai-memory` em `projects/ai-memory/projects/<Projeto>/` (desempate pelo mais recente); (9) proibição absoluta de Google Docs/Sheets e updates in-place no Drive; e (10) testes unitários pragmáticos e auto-provisionamento nos repositórios.
+Protocolo mestre agnóstico e **Fonte Única da Verdade (SSOT)** da governança global do ecossistema **CscTracker**. Define: (1) aprovação prévia obrigatória antes de alterar a própria skill ou diretrizes; (2) cadeia de leitura e cumprimento compulsório das cláusulas pétreas `[PINNED]` específicas de cada repositório em `.ai-memory/decisions.md` e `AI_specs/<Projeto>.md`; (3) execução KISS com economia estrita de tokens; (4) fidelidade absoluta acima de sanitização; (5) UI limpa sem detalhes de infra; (6) fluxo Antigravity (alteração direta ➔ revisão conjunta ➔ commit PT-BR `CSCTRACKER-<ID>` <= 50 chars + push seguro na `master` via merge); (7) bloqueio de implementação sem Task vinculada e backlog de 7 status em `projects/tasks/`; (8) memória contínua `ai-memory` em `projects/ai-memory/projects/<Projeto>/` (desempate pelo mais recente); (9) proibição absoluta de Google Docs/Sheets e updates in-place no Drive; e (10) testes unitários pragmáticos e auto-provisionamento nos repositórios.
 
 ## When to Use
 - Qualquer menção a repositórios do ecossistema CscTracker (`CscTracker*`).
-- Ao analisar logs, investigar falhas, desenhar arquiteturas, gerenciar o backlog de Ideias, consultar/atualizar a `ai-memory` ou aplicar melhorias/correções diretamente no código para o desenvolvedor (Carlos Schwalm).
+- Ao analisar logs, investigar falhas, desenhar arquiteturas, gerenciar o backlog de Tasks (sinônimo: Ideias), consultar/atualizar a `ai-memory` ou aplicar melhorias/correções diretamente no código para o desenvolvedor (Carlos Schwalm).
 
 ## 0. Diretriz 3.19 — Aprovação Prévia Obrigatória para Alterações na Skill e Governança
 - **PROIBIÇÃO DE AUTO-EDIÇÃO SILENCIOSA:** Sempre que o desenvolvedor relatar um problema ou solicitar uma melhoria na `SKILL.md` ou nos documentos estruturais (`README.md`, `00_INDEX.md`), o assistente **NÃO deve aplicar alterações diretamente**.
@@ -20,9 +20,9 @@ Antes de responder qualquer pergunta técnica, analisar código ou formular alte
 0. **Sincronismo da própria `SKILL.md` (`projects/SKILL.md` — ID: `1zccc1imMWMiobP4iY0KOmds97OLTUaNW`):** Verificar se `projects/SKILL.md` no Google Drive está mais recente que `~/.gemini/skills/csctracker/SKILL.md` e `.agents/skills/csctracker/SKILL.md` do repositório; se estiver, sincronizar as cópias locais antes de prosseguir.
 1. `projects/README.md` (ID: `1E2w6Tw356wIEqz23wSIJz-csa6bGxgDR`): Mapa do ecossistema, catálogo dos serviços ativos e links canônicos.
 2. `projects/AI_specs/<NomeDoProjeto>.md` (Pasta `AI_specs` ID: `1PzCHUi9CbajfJat0UpY3HD7jk9nh0Dir`): Especificação técnica estática do projeto alvo.
-3. Diretório `projects/ideias/` (Pasta `ideias` ID: `11uqM37jcqbdDReqZreCi5uemSZmbAJYI`):
-   - `projects/ideias/ideias.csv` (ID: `10sgqDHrpRJlw39T5Rk8iRbKXdHvUJNsf`): Índice consolidado (`id,nome,status`).
-   - `projects/ideias/<ID>.md` (ativas), `prontas/<ID>.md` (concluídas — Pasta ID `1qRvQ5DwyY7P0T9lK7-ud9kalSbceXUKl`), `monetizar/<ID>.md` (SaaS, criada sob demanda).
+3. Diretório `projects/tasks/` (Pasta `tasks` ID: `11uqM37jcqbdDReqZreCi5uemSZmbAJYI`):
+   - `projects/tasks/tasks.csv` (ID: `10sgqDHrpRJlw39T5Rk8iRbKXdHvUJNsf`): Índice consolidado (`id,nome,status`).
+   - `projects/tasks/<ID>.md` (ativas), `prontas/<ID>.md` (concluídas — Pasta ID `1qRvQ5DwyY7P0T9lK7-ud9kalSbceXUKl`), `monetizar/<ID>.md` (SaaS, criada sob demanda).
 4. Diretório `projects/ai-memory/` (`1noA7dlsUx4GfaytEZaczaZeOk_r_9p8v`) e `.ai-memory/` local do repositório (`Recall` obrigatório):
    - Globais: `00_INDEX.md` (`1IQotJT4uuro8oIN23CUDbzpoULSf8J8I`), `WIP_GLOBAL.md` (`1Mwc_JQCx_hr3RXOzoRi6ZguhdR9WJ31l`), `INBOX_INTEGRACOES.md` (`1r3AgaEJ9Mv19qPu0ol0s9lUHf3LWqIYC`), `GLOBAL_ECOSSISTEMA.md` (`1Plylw784Cv3RLv5JYCD857IDqB8zCPRb`) e `gotchas_globais.md` (`1ysiAnfWQ0mJh51SYCe9MDxeh5gp5sZOP` quando envolver infra/deploy).
    - Projeto alvo (exclusivamente dentro de `projects/ai-memory/projects/<NomeDoProjeto>/` ou `.ai-memory/`): `handoff.md`, `gotchas.md` e **`decisions.md` (obrigatório absorver todas as regras `[PINNED]` do projeto antes de codar)**.
@@ -35,9 +35,9 @@ Antes de responder qualquer pergunta técnica, analisar código ou formular alte
 | `projects/README.md` | `text/markdown` | `1E2w6Tw356wIEqz23wSIJz-csa6bGxgDR` |
 | `projects/SKILL.md` | `text/markdown` | `1zccc1imMWMiobP4iY0KOmds97OLTUaNW` |
 | `projects/AI_specs/` | Folder | `1PzCHUi9CbajfJat0UpY3HD7jk9nh0Dir` |
-| `projects/ideias/` | Folder | `11uqM37jcqbdDReqZreCi5uemSZmbAJYI` |
-| `projects/ideias/prontas/` | Folder | `1qRvQ5DwyY7P0T9lK7-ud9kalSbceXUKl` |
-| `projects/ideias/ideias.csv` | `text/csv` | `10sgqDHrpRJlw39T5Rk8iRbKXdHvUJNsf` |
+| `projects/tasks/` | Folder | `11uqM37jcqbdDReqZreCi5uemSZmbAJYI` |
+| `projects/tasks/prontas/` | Folder | `1qRvQ5DwyY7P0T9lK7-ud9kalSbceXUKl` |
+| `projects/tasks/tasks.csv` | `text/csv` | `10sgqDHrpRJlw39T5Rk8iRbKXdHvUJNsf` |
 | `projects/ai-memory/` | Folder | `1noA7dlsUx4GfaytEZaczaZeOk_r_9p8v` |
 | `projects/ai-memory/projects/` | Folder | `1iNcywMpN7MHjQ45iTL1EKGaVkUTyOQvH` |
 | `projects/repositorys/` | Folder | `1M8fP4RiZoXYwlgkDJB-JXHm9qnB_e0Qe` |
@@ -82,7 +82,7 @@ Para evitar retrabalho e desperdício de tokens no `Recall`, **cada arquivo tem 
     3. **Commit & Push (SOMENTE APÓS AUTORIZAÇÃO):** **É terminantemente PROIBIDO executar `git commit`, `git push` ou finalizar o `Handoff` (`.zip`/status) automaticamente sem autorização expressa do desenvolvedor após a revisão** — autorizar a implementação (ex.: *"pode implementar"*) **NÃO** autoriza commit nem push. Só commitar/pushar na mesma etapa se o desenvolvedor pedir expressamente no comando inicial (ex.: *"implemente, commite e faça push"*). Seguir rigorosamente o **Padrão Canônico de Mensagens de Commit (Seção 5.2)** e o **Protocolo de Push Seguro (Seção 5.3)**.
 - **2. Padrão Canônico de Mensagens de Commit (Obrigatório em Todo o Ecossistema CscTracker):**
   1. **Língua:** Obrigatoriamente em português (PT-BR), sem prolixidade.
-  2. **Primeira Linha (Assunto):** Iniciar obrigatoriamente com o identificador da Ideia vinculada no formato `CSCTRACKER-<ID>` seguido de **uma única frase** no modo imperativo (`Atualiza...`, `Corrige...`, `Adiciona...`, `Remove...`, `Refatora...`), mantendo **no máximo 50 caracteres** no total.
+  2. **Primeira Linha (Assunto):** Iniciar obrigatoriamente com o identificador da Task vinculada no formato `CSCTRACKER-<ID>` seguido de **uma única frase** no modo imperativo (`Atualiza...`, `Corrige...`, `Adiciona...`, `Remove...`, `Refatora...`), mantendo **no máximo 50 caracteres** no total.
   3. **Linha em Branco:** Obrigatória separando o assunto do corpo.
   4. **Corpo (Explicação Detalhada):** No **máximo duas ou três frases**, focadas no que foi feito e no porquê técnico/funcional.
   ```git
@@ -102,18 +102,19 @@ Para evitar retrabalho e desperdício de tokens no `Recall`, **cada arquivo tem 
 - **5. Delegação para Agentes Externos (JetBrains Junie / Outras IDEs):**
   - Ao gerar prompts para delegação a agentes externos, incluir obrigatoriamente a diretriz de economia de tokens/KISS e todas as cláusulas `[PINNED]` do `.ai-memory/decisions.md` do projeto alvo (além de código completo verbatim quando o foco for economizar ciclos de raciocínio de agentes pagos como o Junie).
 
-## 6. Diretriz 3.11, 3.14 e 3.22 — Governança do Backlog (`projects/ideias/`) e Rastreabilidade Obrigatória
+## 6. Diretriz 3.11, 3.14 e 3.22 — Governança do Backlog (`projects/tasks/`) e Rastreabilidade Obrigatória
+- **Terminologia Oficial (`Task` = `Ideia`):** O termo oficial para qualquer demanda, bug, feature ou melhoria do backlog é **Task** (`Task #ID`). Caso o desenvolvedor utilize o termo **"ideia"** (ou "demanda"), tratá-lo como **sinônimo exato de Task**.
 - **Bloqueio de Implementação sem Ideia Vinculada (Diretriz 3.22 — Mandatória):**
-  - **É terminantemente proibido implementar qualquer código ou alteração sem que exista uma Ideia vinculada em `projects/ideias/<ID>.md` e `ideias.csv`.**
-  - Se o desenvolvedor solicitar uma implementação e **não houver uma Ideia vinculada**, o assistente **DEVE parar antes de codar, informar explicitamente que não existe Ideia registrada para a demanda e perguntar ao desenvolvedor o que fazer**: se deseja **registrar e refinar a Ideia** primeiro (`Rascunho`/`Nova`) ou **registrar a Ideia e já seguir para a implementação**.
-- **Estrutura Canônica em `projects/ideias/` (EXCLUSIVA DO GOOGLE DRIVE):**
-  - Todo o backlog de ideias reside **exclusivamente** em `projects/ideias/` no Google Drive (`G:\My Drive\CscTracker (1)\projects\ideias\`). **É terminantemente PROIBIDO criar, copiar ou espelhar arquivos de ideias (ex.: `docs/ideias/`) dentro dos repositórios Git de código-fonte.**
-  - `projects/ideias/<ID>.md`: Demandas ativas (nome limpo apenas pelo número: `10.md`, `44.md`, `54.md`).
-  - `projects/ideias/prontas/<ID>.md`: Demandas concluídas.
-  - `projects/ideias/monetizar/<ID>.md`: Demandas SaaS/monetização.
-  - `projects/ideias/ideias.csv`: Índice mestre (`id,nome,status`) sempre atualizado in-place (`gdrive mutate update 10sgqDHrpRJlw39T5Rk8iRbKXdHvUJNsf ... --mime-type text/csv`).
+  - **É terminantemente proibido implementar qualquer código ou alteração sem que exista uma Task vinculada em `projects/tasks/<ID>.md` e `tasks.csv`.**
+  - Se o desenvolvedor solicitar uma implementação e **não houver uma Task vinculada**, o assistente **DEVE parar antes de codar, informar explicitamente que não existe Task registrada para a demanda e perguntar ao desenvolvedor o que fazer**: se deseja **registrar e refinar a Task** primeiro (`Rascunho`/`Nova`) ou **registrar a Task e já seguir para a implementação**.
+- **Estrutura Canônica em `projects/tasks/` (EXCLUSIVA DO GOOGLE DRIVE):**
+  - Todo o backlog de tasks reside **exclusivamente** em `projects/tasks/` no Google Drive (`G:\My Drive\CscTracker (1)\projects\tasks\`). **É terminantemente PROIBIDO criar, copiar ou espelhar arquivos de tasks/ideias (ex.: `docs/tasks/`, `docs/ideias/`) dentro dos repositórios Git de código-fonte.**
+  - `projects/tasks/<ID>.md`: Demandas ativas (nome limpo apenas pelo número: `10.md`, `44.md`, `54.md`).
+  - `projects/tasks/prontas/<ID>.md`: Demandas concluídas.
+  - `projects/tasks/monetizar/<ID>.md`: Demandas SaaS/monetização.
+  - `projects/tasks/tasks.csv`: Índice mestre (`id,nome,status`) sempre atualizado in-place (`gdrive mutate update 10sgqDHrpRJlw39T5Rk8iRbKXdHvUJNsf ... --mime-type text/csv`).
 - **Regra de Sequencial Único e Monotônico (`MAX(ID) + 1`):**
-  - Novo `<ID>` é sempre o maior ID já registrado (entre `ideias/`, `prontas/`, `monetizar/` e `ideias.csv`) `+ 1`. Proibido reutilizar IDs antigos.
+  - Novo `<ID>` é sempre o maior ID já registrado (entre `tasks/`, `prontas/`, `monetizar/` e `tasks.csv`) `+ 1`. Proibido reutilizar IDs antigos.
 - **Os 7 Status Canônicos Obrigatórios (Proibido criar variações):**
   ```
   [Rascunho] ➔ [Nova] ➔ [Em Andamento] ➔ [Por Publicar] ➔ [Em Homologação] ➔ [Concluída]
@@ -127,8 +128,8 @@ Para evitar retrabalho e desperdício de tokens no `Recall`, **cada arquivo tem 
   4. **`Por Publicar`**: Implementada e commitada, aguardando release PyPI, build Docker/CI ou APK.
   5. **`Em Homologação`**: Publicada e rodando em ambiente real, em validação prática.
   6. **`Aguardando Ajuste`**: Falhou ou apresentou pontos na homologação (retorna para `Em Andamento` ao iniciar correção).
-  7. **`Concluída`**: 100% homologada e movida para `projects/ideias/prontas/<ID>.md`.
-- **Sincronia:** Ao concluir ou alterar uma Ideia, atualizar o `<ID>.md`, o `ideias.csv` e o mapeamento em `AI_specs/<Projeto>.md`.
+  7. **`Concluída`**: 100% homologada e movida para `projects/tasks/prontas/<ID>.md`.
+- **Sincronia:** Ao concluir ou alterar uma Task, atualizar o `<ID>.md`, o `tasks.csv` e o mapeamento em `AI_specs/<Projeto>.md`.
 
 ## 7. Diretriz 3.12 e 3.21 — Gestão Híbrida de Fontes (`git pull` Prévio, GitHub vs. `projects/repositorys/`) e Sincronismo `.zip`
 - **Sincronismo Prévio Obrigatório (`git pull` — Diretriz 3.21):** Antes de iniciar qualquer análise de código ou tarefa em um projeto que possua repositório Git (`.git/` local ou remoto no GitHub), o assistente DEVE garantir o `git pull` atualizado:
@@ -150,14 +151,14 @@ Sempre que interagir com qualquer repositório CscTracker, verificar e manter at
    - **Passos obrigatórios no cofre do GitHub (orientar o desenvolvedor ao criar):** No repositório (ou organização) no GitHub, acessar **Settings ➔ Secrets and variables ➔ Actions** e cadastrar:
      - **Secret obrigatório:** `TOKEN_CSCTRACKER` (token válido do `auth.csctracker.com`, validado em `/oauth/check_token`).
      - **Variable ou Secret opcional:** `CICD_WEBHOOK_URL` (para sobrescrever a URL padrão `https://cicd.csctracker.com/webhook`).
-- **Proibição de Espelhamento de Backlog/Specs no Repositório:** Dentro dos repositórios Git só é permitido manter os itens de governança/memória/workflows acima. É terminantemente proibido criar ou espelhar `ideias/` (ex.: `docs/ideias/`), `AI_specs/` ou `fluxos/` dentro da pasta do projeto.
+- **Proibição de Espelhamento de Backlog/Specs no Repositório:** Dentro dos repositórios Git só é permitido manter os itens de governança/memória/workflows acima. É terminantemente proibido criar ou espelhar `tasks/`/`ideias/` (ex.: `docs/tasks/`, `docs/ideias/`), `AI_specs/` ou `fluxos/` dentro da pasta do projeto.
 
 ## 9. Diretriz 3.17 — Protocolo de Memória Contínua `ai-memory` (`Recall ➔ Checkpoint ➔ Consolidate ➔ Handoff`)
 - **⚠️ TRAVA ESTRUTURAL INEGOCIÁVEL:** O espelho de qualquer repositório no Google Drive reside obrigatoriamente em **`CscTracker/projects/ai-memory/projects/<NomeDoProjeto>/`** (`G:\My Drive\CscTracker (1)\projects\ai-memory\projects\<NomeDoProjeto>\`, com **dois** níveis `projects`). É terminantemente PROIBIDO criar pastas de projetos direto na raiz `projects/ai-memory/<NomeDoProjeto>/`.
 - **Desempate Git vs. Drive (Sempre o Mais Recente):** Em caso de divergência entre `.ai-memory/` no repositório Git e `projects/ai-memory/projects/<NomeDoProjeto>/` no Google Drive, **comparar as datas de modificação e adotar sempre o mais recente como base** (mesclando novidades pontuais do outro se houver, nunca sobrescrevendo o arquivo mais novo).
 - **1. `Recall`:** Ler `00_INDEX.md`, `WIP_GLOBAL.md`, `INBOX_INTEGRACOES.md`, `GLOBAL_ECOSSISTEMA.md` e o `.ai-memory/` (`handoff.md`, `gotchas.md`, `decisions.md` `[PINNED]`) do projeto alvo. Avisar imediatamente sobre pendências em `INBOX_INTEGRACOES.md`. Se detectar memória obsoleta que contradiz o código atual (exceto itens `[PINNED]`), atualizar ou propor a remoção no `Handoff` em vez de acumular `[STALE]` — **antes de excluir qualquer item de memória, sempre informar exatamente o que será excluído e pedir confirmação ao desenvolvedor**.
 - **2. `Checkpoint` Anti-Compactação:** Em sessões longas, atualizar `.ai-memory/handoff.md` (e `WIP_GLOBAL.md`) a cada etapa concluída ou abordagem que falhou (*Failed Approaches*).
-- **3. `Consolidate` e Tags:** Armadilhas vão para `gotchas.md` (ou `gotchas_globais.md`); decisões e regras invioláveis de projeto vão para `decisions.md` com tag `[PINNED]`. Respeitar `[EXPIRES: AAAA-MM-DD]` e `[TEMP: até concluir Ideia #ID]`.
+- **3. `Consolidate` e Tags:** Armadilhas vão para `gotchas.md` (ou `gotchas_globais.md`); decisões e regras invioláveis de projeto vão para `decisions.md` com tag `[PINNED]`. Respeitar `[EXPIRES: AAAA-MM-DD]` e `[TEMP: até concluir Task #ID]`.
 - **4. `Handoff`:** Atualizar `.ai-memory/handoff.md` e `changelog_sessoes.md` no Git e espelhar in-place em `projects/ai-memory/projects/<Projeto>/` no Drive; atualizar `WIP_GLOBAL.md`; registrar aviso em `INBOX_INTEGRACOES.md` caso altere contrato entre serviços; sincronizar `.zip` no Drive; rotacionar `changelog_sessoes.md` (>10 sessões) para `arquivo_sessoes/AAAA-MM.md`.
 
 ## 10. Diretriz 3.18 — Proibição Estrita de Google Docs e Google Sheets (Texto Puro `.md`/`.yml`/`.csv` e Update In-Place)

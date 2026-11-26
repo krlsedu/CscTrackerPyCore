@@ -2,10 +2,18 @@
 project: CscTrackerPyCore
 kind: changelog
 tier: episodic
-updated_at: 2026-11-24
+updated_at: 2026-11-26
 ---
 
 # 📜 Changelog de Sessões — `CscTrackerPyCore`
+
+## 2026-11-26 — Task #121: Pool HTTP (`requests.Session`) e Timeout `600s` no `RemoteRepository`
+- Configurada `requests.Session()` persistente com `HTTPAdapter` (`pool_connections=10`, `pool_maxsize=32`) e `timeout=600` padrão em todos os métodos do `RemoteRepository`, com override via `REMOTE_REPOSITORY_TIMEOUT` (e parse seguro para strings vazias/inválidas).
+- Registrado `self.remote_repository.close` como hook no `GracefulShutdown` via `Starter.__init__()`.
+- Adicionados testes unitários offline em `tests/test_remote_repository.py` (`28/28` passando na suíte completa em Python `3.15.2`).
+
+## 2026-11-24 — Refinamento Final da Task #108 (Pronta para Implementação — Parte 1)
+- Fechada arquitetura da Parte 1 no `CscTrackerPyCore` (absorvendo a Task #107): inclusão de `paho-mqtt>=2.0,<3`, semântica `seen_fingerprints` (desconhecido/`CRITICAL` imediato com cooldown vs. conhecido `>= 3` em `5 min`), header `Authorization: Bearer <TOKEN_CSCTRACKER|API_TOKEN>` na chamada ao `CscTrackerIA` (compatível com Task #109) e encerramento limpo do client MQTT via `GracefulShutdown`.
 
 ## 2026-11-24 — Task #109: Resolução de E-mail via Token Bearer em `RequestInfo`
 - Adicionado `RequestInfo.get_user_email()` em `csctracker_py_core/utils/request_info.py` com consulta a `/oauth/check_token` e cache thread-safe em RAM por SHA-256 (TTL 5 min).

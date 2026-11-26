@@ -1,12 +1,18 @@
 import logging
+import math
 
 import requests
+from requests.adapters import HTTPAdapter
 
 from csctracker_py_core.models.emuns.config import Config
 from csctracker_py_core.utils.configs import Configs
 
 
 class RemoteRepository:
+    DEFAULT_TIMEOUT = 600
+    DEFAULT_POOL_CONNECTIONS = 10
+    DEFAULT_POOL_MAXSIZE = 32
+
     def __init__(self):
         self.logger = logging.getLogger()
         self.url_repository = Configs.get_env_variable(
@@ -14,12 +20,85 @@ class RemoteRepository:
         )
         if self.url_repository[-1] != "/":
             self.url_repository += "/"
-        pass
+        self.timeout = self._get_positive_timeout_env(
+            Config.REMOTE_REPOSITORY_TIMEOUT, default=self.DEFAULT_TIMEOUT
+        )
+        pool_connections = self._get_positive_int_env(
+            Config.REMOTE_REPOSITORY_POOL_CONNECTIONS,
+            default=self.DEFAULT_POOL_CONNECTIONS,
+        )
+        pool_maxsize = self._get_positive_int_env(
+            Config.REMOTE_REPOSITORY_POOL_MAXSIZE,
+            default=self.DEFAULT_POOL_MAXSIZE,
+        )
+        self.session = requests.Session()
+        adapter = HTTPAdapter(
+            pool_connections=pool_connections,
+            pool_maxsize=pool_maxsize,
+        )
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
+
+    @staticmethod
+    def _get_positive_timeout_env(key: Config, default: int = DEFAULT_TIMEOUT):
+        value = Configs.get_env_variable(key, default=default)
+        if value is None or isinstance(value, bool):
+            return default
+        if isinstance(value, int):
+            return value if value > 0 else default
+        if isinstance(value, float):
+            return value if math.isfinite(value) and value > 0 else default
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return default
+            try:
+                parsed_int = int(stripped)
+                return parsed_int if parsed_int > 0 else default
+            except ValueError:
+                try:
+                    parsed_float = float(stripped)
+                    return (
+                        parsed_float
+                        if math.isfinite(parsed_float) and parsed_float > 0
+                        else default
+                    )
+                except ValueError:
+                    return default
+        return default
+
+    @staticmethod
+    def _get_positive_int_env(key: Config, default: int) -> int:
+        value = Configs.get_env_variable(key, default=default)
+        if value is None or isinstance(value, bool):
+            return default
+        if isinstance(value, int):
+            return value if value > 0 else default
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return default
+            try:
+                parsed = int(stripped)
+                return parsed if parsed > 0 else default
+            except ValueError:
+                return default
+        return default
+
+    def close(self):
+        if self.session is not None:
+            try:
+                self.session.close()
+            except Exception:
+                pass
 
     def insert(self, table, data, headers=None):
         try:
-            response = requests.post(
-                self.url_repository + table, headers=headers, json=data
+            response = self.session.post(
+                self.url_repository + table,
+                headers=headers,
+                json=data,
+                timeout=self.timeout,
             )
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f"Error inserting data: {response.text}")
@@ -30,8 +109,12 @@ class RemoteRepository:
     def update(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.post(
-                self.url_repository + table, headers=headers, json=data, params=params
+            response = self.session.post(
+                self.url_repository + table,
+                headers=headers,
+                json=data,
+                params=params,
+                timeout=self.timeout,
             )
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f"Error updating data: {response.text}")
@@ -45,11 +128,12 @@ class RemoteRepository:
     def delete(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.post(
+            response = self.session.post(
                 self.url_repository + "delete/" + table,
                 headers=headers,
                 json=data,
                 params=params,
+                timeout=self.timeout,
             )
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f"Error deleting data: {response.text}")
@@ -73,8 +157,11 @@ class RemoteRepository:
     def get_object(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.get(
-                self.url_repository + "single/" + table, params=params, headers=headers
+            response = self.session.get(
+                self.url_repository + "single/" + table,
+                params=params,
+                headers=headers,
+                timeout=self.timeout,
             )
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f"Error getting data: {response.text}")
@@ -88,8 +175,11 @@ class RemoteRepository:
     def get_objects(self, table, keys=None, data=None, headers=None):
         params = self.get_params(data, keys)
         try:
-            response = requests.get(
-                self.url_repository + table, params=params, headers=headers
+            response = self.session.get(
+                self.url_repository + table,
+                params=params,
+                headers=headers,
+                timeout=self.timeout,
             )
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f"Error getting data: {response.text}")
@@ -100,8 +190,11 @@ class RemoteRepository:
     def execute_select(self, select, headers=None):
         command = {"command": select}
         try:
-            response = requests.post(
-                self.url_repository + "command/select", headers=headers, json=command
+            response = self.session.post(
+                self.url_repository + "command/select",
+                headers=headers,
+                json=command,
+                timeout=self.timeout,
             )
             if response.status_code < 200 or response.status_code > 299:
                 raise Exception(f"Error getting data: {response.text}")

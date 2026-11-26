@@ -121,10 +121,11 @@ class TestGracefulShutdown(unittest.TestCase):
         starter = Starter(save_request=False)
         shutdown = starter.get_graceful_shutdown()
         self.assertIsNotNone(shutdown)
+        self.assertIn(starter.remote_repository.close, shutdown._shutdown_hooks)
 
         hook_called = []
         starter.register_shutdown_hook(lambda: hook_called.append(True))
-        self.assertEqual(len(shutdown._shutdown_hooks), 1)
+        self.assertEqual(len(shutdown._shutdown_hooks), 2)
 
 
 if __name__ == "__main__":
